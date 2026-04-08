@@ -1,0 +1,29 @@
+uqpay
+.cache/
+dist/
+bin/
+.claude/
+docs/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Go
+vendor/
+
+
+#test
+test_scripts/
+
+/log/
