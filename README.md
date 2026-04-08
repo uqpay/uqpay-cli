@@ -33,7 +33,11 @@ The official [UQPAY](https://www.uqpay.com/) CLI tool — built for humans and A
 ### From npm (recommended)
 
 ```bash
+# Install CLI
 npm install -g @uqpay/cli
+
+# Install AI Agent Skills (required for AI Agent usage)
+npx skills add uqpay/uqpay-cli -y -g
 ```
 
 ### From source
@@ -44,6 +48,9 @@ Requires Go 1.21+.
 git clone https://github.com/uqpay/uqpay-cli.git
 cd uqpay-cli
 make install
+
+# Install AI Agent Skills (required for AI Agent usage)
+npx skills add uqpay/uqpay-cli -y -g
 ```
 
 ### Enable tab completion (optional)
@@ -78,6 +85,7 @@ uqpay --env sandbox --client-id ID --api-key KEY banking balance list
 ```bash
 # Step 1 — Install
 npm install -g @uqpay/cli
+npx skills add uqpay/uqpay-cli -y -g
 
 # Step 2 — Configure (provide credentials from UQPAY dashboard)
 uqpay config set client-id <CLIENT_ID>

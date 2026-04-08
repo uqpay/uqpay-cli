@@ -4,6 +4,8 @@
 
 Complete onboarding flow for creating connected accounts.
 
+For complete parameter details, run `uqpay account create -h` or `uqpay account create-sub -h`.
+
 ## COMPANY Account (via `account create`)
 
 ```bash
@@ -28,22 +30,33 @@ uqpay account create \
   -d registration_address.state=SG \
   -d registration_address.postal_code=048616 \
   -d "business_address[0].line1=1 Raffles Place" \
-  -d business_address[0].city=Singapore \
-  -d business_address[0].country=SG \
-  -d business_address[0].state=SG \
-  -d business_address[0].postal_code=048616 \
-  -d representatives[0].roles=DIRECTOR \
-  -d representatives[0].first_name=John \
-  -d representatives[0].last_name=Doe \
-  -d representatives[0].nationality=SG \
-  -d representatives[0].date_of_birth=1990-01-15 \
-  -d representatives[0].identification.type=PASSPORT \
-  -d representatives[0].identification.id_number=E1234567 \
-  -d "representatives[0].identification.front=@+./id_front.png" \
+  -d "business_address[0].city=Singapore" \
+  -d "business_address[0].country=SG" \
+  -d "business_address[0].state=SG" \
+  -d "business_address[0].postal_code=048616" \
+  -d "representatives[0].roles=DIRECTOR" \
+  -d "representatives[0].as_applicant=true" \
+  -d "representatives[0].first_name=John" \
+  -d "representatives[0].last_name=Doe" \
+  -d "representatives[0].nationality=SG" \
+  -d "representatives[0].date_of_birth=1990-01-15" \
+  -d "representatives[0].identification.type=PASSPORT" \
+  -d "representatives[0].identification.id_number=E1234567" \
+  -d "representatives[0].identification.documents.front=@+./id_front.png" \
   -d "representatives[0].address.line1=10 Anson Road" \
-  -d representatives[0].address.city=Singapore \
-  -d representatives[0].address.country=SG \
-  -d representatives[0].address.postal_code=079903
+  -d "representatives[0].address.city=Singapore" \
+  -d "representatives[0].address.country=SG" \
+  -d "representatives[0].address.postal_code=079903" \
+  -d "representatives[0].residential_address.line1=10 Anson Road" \
+  -d "representatives[0].residential_address.city=Singapore" \
+  -d "representatives[0].residential_address.country=SG" \
+  -d "representatives[0].residential_address.postal_code=079903" \
+  -d "documents[0].type=CERTIFICATE_OF_INCORPORATION" \
+  -d "documents[0].front=@+./cert.png" \
+  -d tos_acceptance.ip=192.168.1.1 \
+  -d tos_acceptance.date=2026-04-08T00:00:00Z \
+  -d tos_acceptance.user_agent=uqpay-cli \
+  -d tos_acceptance.tos_agreement=1
 ```
 
 ## INDIVIDUAL Sub-Account (via `account create-sub`)
@@ -104,21 +117,21 @@ uqpay account create-sub \
   -d company_address.city=Singapore \
   -d company_address.state=SG \
   -d company_address.postal_code=048616 \
-  -d ownership_details.representatives[0].legal_first_name_english=Jane \
-  -d ownership_details.representatives[0].legal_last_name_english=Smith \
-  -d ownership_details.representatives[0].email_address=jane@example.com \
-  -d ownership_details.representatives[0].is_applicant=1 \
-  -d ownership_details.representatives[0].job_title=DIRECTOR \
-  -d ownership_details.representatives[0].nationality=SG \
-  -d ownership_details.representatives[0].phone_number=+6591234567 \
-  -d ownership_details.representatives[0].date_of_birth=1985-03-20 \
-  -d ownership_details.representatives[0].country_or_territory=SG \
+  -d "ownership_details.representatives[0].legal_first_name_english=Jane" \
+  -d "ownership_details.representatives[0].legal_last_name_english=Smith" \
+  -d "ownership_details.representatives[0].email_address=jane@example.com" \
+  -d "ownership_details.representatives[0].is_applicant=1" \
+  -d "ownership_details.representatives[0].job_title=DIRECTOR" \
+  -d "ownership_details.representatives[0].nationality=SG" \
+  -d "ownership_details.representatives[0].phone_number=+6591234567" \
+  -d "ownership_details.representatives[0].date_of_birth=1985-03-20" \
+  -d "ownership_details.representatives[0].country_or_territory=SG" \
   -d "ownership_details.representatives[0].street_address=1 Raffles Place" \
-  -d ownership_details.representatives[0].city=Singapore \
-  -d ownership_details.representatives[0].state=SG \
-  -d ownership_details.representatives[0].postal_code=048616 \
-  -d ownership_details.representatives[0].identification_type=PASSPORT \
-  -d ownership_details.representatives[0].identification_value=E1234567 \
+  -d "ownership_details.representatives[0].city=Singapore" \
+  -d "ownership_details.representatives[0].state=SG" \
+  -d "ownership_details.representatives[0].postal_code=048616" \
+  -d "ownership_details.representatives[0].identification_type=PASSPORT" \
+  -d "ownership_details.representatives[0].identification_value=E1234567" \
   -d "ownership_details.representatives[0].identity_docs[0]=@+./id.png" \
   -d "ownership_details.shareholder_docs[0]=@+./shareholder.png" \
   -d business_details.country_or_territory=SG \

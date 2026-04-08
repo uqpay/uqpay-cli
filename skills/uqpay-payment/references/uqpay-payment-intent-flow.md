@@ -18,11 +18,13 @@ uqpay payment intent create \
 Returns `payment_intent_id` (e.g. `PI2041756265729757184`) and `client_secret`.
 
 **Key fields:**
-- `amount` — payment amount
-- `currency` — ISO 4217 (USD, SGD, etc.)
-- `merchant_order_id` — unique in your system, acts as idempotency key
-- `return_url` — where customer returns after 3DS or redirect
+- `amount` — payment amount (required)
+- `currency` — ISO 4217 (USD, SGD, etc.) (required)
+- `merchant_order_id` — unique in your system, acts as idempotency key (required)
+- `return_url` — where customer returns after 3DS or redirect (required)
 - `description` — shown to customer, max 32 chars
+
+For complete parameter details, run `uqpay payment intent create -h`.
 
 ## Step 2: Customer Completes Payment
 

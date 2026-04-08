@@ -68,6 +68,9 @@ func NewRootCmd() *cobra.Command {
 	setupCompletionCmd.GroupID = "other"
 	root.AddCommand(setupCompletionCmd)
 
+	// Hide cobra's built-in completion command (users should use setup-completion instead)
+	root.CompletionOptions.HiddenDefaultCmd = true
+
 	// Shortcuts: top-level aliases — each is an independent instance
 	shortcuts := []struct {
 		cmd   *cobra.Command

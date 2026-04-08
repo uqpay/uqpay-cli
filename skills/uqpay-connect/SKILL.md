@@ -36,9 +36,10 @@ Platform (Master Account)
 - Account creation payloads are the most complex in the API — use the [onboarding reference](references/uqpay-connect-onboarding.md)
 - `@+filepath` (data URI format) required for document fields
 - No special prefix needed for most fields — phone numbers, postal codes, registration numbers are strings by default
-- `inherit`, `internationally`, `tos_acceptance.tos_agreement` are auto-converted to numbers by the CLI
+- **Auto number coercion:** `tos_agreement` is auto-converted for both `account create` and `create-sub`. Additionally, `create-sub` auto-converts `inherit`, `internationally`, `ownership_percentage`
 - After account creation, status is `PROCESSING` — verification happens asynchronously
 - Once verified, use `--on-behalf-of` to operate as the connected account across all domains
+- **Run `uqpay account <action> -h`** for complete parameter lists. The `-h` output is the source of truth.
 
 ## Command Reference
 
@@ -46,8 +47,8 @@ Platform (Master Account)
 |--------|---------|------|
 | list | `uqpay account list [--page-num N --page-size N]` | GET |
 | get | `uqpay account get <account_id>` | GET |
-| create | `uqpay account create -d ...` | POST |
-| create-sub | `uqpay account create-sub -d ...` | POST |
+| create | `uqpay account create -d ...` | POST — **[see onboarding guide](references/uqpay-connect-onboarding.md) for required fields** |
+| create-sub | `uqpay account create-sub -d ...` | POST — **[see onboarding guide](references/uqpay-connect-onboarding.md) for required fields** |
 | additional-documents | `uqpay account additional-documents --country SG --business-code BANKING` | GET |
 
 ## Cross-Domain Usage

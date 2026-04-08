@@ -136,7 +136,7 @@ The CLI auto-coerces values:
 
 ### Automatic Number Coercion
 
-The CLI automatically converts known number-type fields (such as `amount`, `transaction_amount`, `card_limit`, `inherit`, `internationally`, `tos_agreement`, `payout_amount`, `amount_to_capture`, etc.) to JSON numbers. Just type the value normally:
+The CLI automatically converts known number-type fields to JSON numbers. Known fields include: `amount`, `transaction_amount`, `card_limit`, `no_pin_payment_amount`, `payout_amount`, `amount_to_capture`, `inherit`, `internationally`, `tos_agreement`, `ownership_percentage`. Just type the value normally:
 
 ```bash
 -d amount=100                        # 100 (number, auto-converted)
@@ -145,6 +145,8 @@ The CLI automatically converts known number-type fields (such as `amount`, `tran
 -d postal_code=10001                 # "10001" (string, not a known number field)
 -d merchant_category_code=5734       # "5734" (string)
 ```
+
+The exact set of auto-converted fields depends on each command's implementation. Run `uqpay <command> -h` to see which fields are typed as `number`.
 
 Manual overrides `num:` and `str:` still work but are rarely needed — use `num:` to force an unknown field to a number, or `str:` to force a known number field to a string.
 

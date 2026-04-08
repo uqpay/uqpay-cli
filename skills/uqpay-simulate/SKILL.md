@@ -20,6 +20,8 @@ metadata:
 - **Simulate Authorization** — triggers a card authorization on an active issuing card (triggers transaction webhook)
 - **Simulate Reversal** — reverses a previously simulated authorization
 
+**Run `uqpay simulate <action> -h`** for complete parameter lists.
+
 ## Command Reference
 
 | Action | Command | Description |

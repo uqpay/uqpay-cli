@@ -54,6 +54,7 @@ REQUIRES_PAYMENT_METHOD → REQUIRES_CUSTOMER_ACTION (3DS) → REQUIRES_CAPTURE 
 - `capture` only needed for manual capture mode
 - `cancel` releases held funds (use `-d cancellation_reason=requested_by_customer`)
 - `--on-behalf-of` supported for connected account payments
+- **Run `uqpay payment <resource> <action> -h`** for complete parameter lists. The `-h` output is the source of truth.
 
 ## Command Reference
 
@@ -61,7 +62,7 @@ REQUIRES_PAYMENT_METHOD → REQUIRES_CUSTOMER_ACTION (3DS) → REQUIRES_CAPTURE 
 |----------|--------|---------|------|
 | intent | list | `uqpay payment intent list [--page-num N --page-size N]` | GET |
 | intent | get | `uqpay payment intent get <id>` | GET |
-| intent | create | `uqpay payment intent create -d ...` | POST |
+| intent | create | `uqpay payment intent create -d ...` | POST — **[see flow](references/uqpay-payment-intent-flow.md)** |
 | intent | update | `uqpay payment intent update <id> -d ...` | POST |
 | intent | confirm | `uqpay payment intent confirm <id> -d ...` | POST |
 | intent | capture | `uqpay payment intent capture <id> -d ...` | POST |

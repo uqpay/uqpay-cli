@@ -46,6 +46,7 @@ Banking Wallet
 - **`--on-behalf-of`** — pass a sub-account ID to execute banking operations on behalf of a connected account. See [uqpay-connect](../uqpay-connect/SKILL.md).
 - **Conversion quotes expire in 75 seconds** — create the conversion promptly after quoting.
 - **Payout dates** — `payout_date` must be a valid business day in the payout corridor.
+- **Run `uqpay banking <resource> <action> -h`** for complete parameter lists. The `-h` output is the source of truth.
 
 ## Command Reference
 
@@ -68,15 +69,15 @@ Banking Wallet
 | `uqpay banking exchange-rate list` | GET (flags) | List indicative exchange rates |
 | `uqpay banking beneficiary list` | GET (flags) | List beneficiaries |
 | `uqpay banking beneficiary get <id>` | GET | Get beneficiary details |
-| `uqpay banking beneficiary create` | POST (-d) | Create a beneficiary |
+| `uqpay banking beneficiary create` | POST (-d) | Create a beneficiary — **[see reference](references/uqpay-banking-beneficiary-create.md) for required fields** |
 | `uqpay banking beneficiary update <id>` | POST (-d) | Update a beneficiary |
 | `uqpay banking beneficiary delete <id>` | POST | Delete a beneficiary |
-| `uqpay banking beneficiary check <id>` | GET | Check beneficiary validation status |
-| `uqpay banking beneficiary payment-methods` | POST (-d) | List available payment methods for a corridor |
-| `uqpay banking conversion dates` | POST (-d) | List available conversion dates |
+| `uqpay banking beneficiary check` | POST (-d) | Check if a beneficiary bank account is valid |
+| `uqpay banking beneficiary payment-methods` | GET (flags) | List available payment methods for a corridor |
+| `uqpay banking conversion dates` | GET (flags) | List available conversion dates |
 | `uqpay banking payout list` | GET (flags) | List payouts |
 | `uqpay banking payout get <id>` | GET | Get payout details |
-| `uqpay banking payout create` | POST (-d) | Create a payout to a beneficiary |
+| `uqpay banking payout create` | POST (-d) | Create a payout — **[see payout flow](references/uqpay-banking-payout-flow.md) for full workflow** |
 
 ## Workflows
 

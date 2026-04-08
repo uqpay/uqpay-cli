@@ -2,6 +2,8 @@
 
 Beneficiaries are registered recipients for payouts. The required fields depend on `entity_type` and `payment_method`.
 
+For complete parameter details, run `uqpay banking beneficiary create -h`.
+
 ## INDIVIDUAL Entity Type
 
 ### Required Fields

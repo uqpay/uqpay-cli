@@ -17,7 +17,7 @@ Parameters:
   Required:
     currency          string   ISO 4217 source currency (e.g. USD)
     amount            string   Amount to send in source currency
-    purpose_code      string   Purpose code (e.g. GOODS_SERVICES, SALARY, INVOICE, etc.)
+    purpose_code      string   Purpose code (e.g. GOODS_PURCHASED, SALARY, INVOICE, etc.)
     payout_reference  string   Bank reference shown in beneficiary's bank statement
     fee_paid_by       string   SHARED | OURS
     payout_date       string   Scheduled date (YYYY-MM-DD)
@@ -34,7 +34,7 @@ Examples:
   uqpay banking payout create \
     -d currency=USD \
     -d amount=1000 \
-    -d purpose_code=GOODS_SERVICES \
+    -d purpose_code=GOODS_PURCHASED \
     -d payout_reference="Invoice #001" \
     -d fee_paid_by=SHARED \
     -d payout_date=2026-04-10 \

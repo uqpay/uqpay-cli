@@ -54,7 +54,13 @@ Report (settlement/ledger)
 
 - **No prefix needed** — phone numbers, PAN, PIN, postal codes are strings by default. Amount fields (`card_limit`, `spending_controls[n].amount`, recharge/withdraw `amount`) are auto-converted to numbers by the CLI.
 
+- **Cardholder create requires `country_code`** (ISO 3166-1 alpha-2). This field is easy to miss but mandatory for KYC compliance.
+
+- **Card create key required params:** `card_product_id` (from `product list`), `cardholder_id` (from `cardholder create`), `card_currency` (ISO 4217). For SHARE mode products, `card_limit` is also required.
+
 - **Use `@filepath` for identity documents** in cardholder create/update. Example: `-d identity.front_file=@./passport.jpg` encodes the file as pure base64.
+
+- **Run `uqpay issuing <resource> <action> -h` for complete parameter lists.** The `-h` output is the source of truth for required fields, types, and valid values.
 
 - **Card modes:**
   - `SINGLE` — one card per cardholder, standard use case
@@ -69,16 +75,16 @@ Report (settlement/ledger)
 | `balance` | `transactions` | List balance transactions (recharge, withdraw, auth) |
 | `cardholder` | `list` | List cardholders with optional filters |
 | `cardholder` | `get <id>` | Get cardholder details by ID |
-| `cardholder` | `create` | Create a new cardholder with KYC info |
+| `cardholder` | `create` | Create a new cardholder — run `-h` for required KYC fields |
 | `cardholder` | `update <id>` | Update cardholder information |
 | `card` | `list` | List cards with optional filters |
 | `card` | `get <id>` | Get card details by ID |
-| `card` | `create` | Create a new card (async) |
+| `card` | `create` | Create a new card (async) — **[see reference](references/uqpay-issuing-card-create.md) for params & KYC** |
 | `card` | `update <id>` | Update card metadata/controls |
 | `card` | `update-status <id>` | Change card status (ACTIVE, FROZEN, CANCELLED) |
 | `card` | `get-secure <id>` | Get sensitive card data (PAN, CVV, expiry) |
 | `card` | `iframe-url <id>` | Get secure iframe URL for card details |
-| `card` | `get-order` | Check card order status by card ID |
+| `card` | `get-order <order-id>` | Check card order status by order ID (from card create response) |
 | `card` | `recharge <id>` | Load funds onto a card |
 | `card` | `withdraw <id>` | Withdraw funds from a card |
 | `card` | `activate` | Activate a physical card |

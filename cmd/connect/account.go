@@ -13,36 +13,112 @@ import (
 
 const accountCreateHelp = `Create a connected sub-account.
 
-Parameters vary by entity_type. Use dot notation for nested fields.
-
-Parameters (INDIVIDUAL entity):
-  Required:
-    entity_type              string   COMPANY | INDIVIDUAL
-    name                     string   Display name
-    contact_details          object   Contact information
-    person_details           object   Personal details
-    residential_address      object   Residential address
-    documents                array    Identity documents
-    tos_acceptance           object   Terms of service acceptance
+Parameters vary by entity_type. Use dot notation for nested fields and [] for arrays.
 
 Parameters (COMPANY entity):
   Required:
-    entity_type              string   COMPANY | INDIVIDUAL
-    name                     string   Business display name
-    country                  string   Two-letter country code (ISO 3166-1 alpha-2)
-    contact_details          object   Contact information
-    business_details         object   Business information
-    registration_address     object   Company registration address
-    business_address         array    Company business address(es)
-    representatives          array    Company representatives
-    documents                array    Identity/business documents
-    tos_acceptance           object   Terms of service acceptance
+    entity_type                                    string   COMPANY
+    name                                           string   Business display name
+    country                                        string   ISO 3166-1 alpha-2 country code (e.g. SG, US, GB)
+    contact_details.email                          string   Contact email
+    contact_details.phone                          string   Contact phone with country code
+    business_details.legal_entity_name_english     string   Legal name in English
+    business_details.incorporation_date            string   Incorporation date (YYYY-MM-DD)
+    business_details.registration_number           string   Business registration number
+    business_details.business_structure             string   LIMITED_COMPANY | SOLE_TRADER | PARTNERSHIP | LISTED | OTHERS
+    business_details.merchant_category_code        string   MCC code (e.g. 7372)
+    business_details.estimated_worker_count        string   BS001 (<50) | BS002 (50-100) | BS003 (100-500) | BS004 (>500)
+    business_details.monthly_estimated_revenue.amount    string   TM001 (<$50K) | TM002 ($50K-$100K) | TM003 | TM004 | TM005
+    business_details.monthly_estimated_revenue.currency  string   ISO 4217 currency code
+    business_details.account_purpose[]             string   USE_API | USE_PLATFORM | ... (repeatable)
+    registration_address.line1                     string   Street address
+    registration_address.city                      string   City
+    registration_address.state                     string   State/province
+    registration_address.postal_code               string   Postal code
+    business_address[0].line1                      string   Street address
+    business_address[0].city                       string   City
+    business_address[0].country                    string   ISO 3166-1 alpha-2 country code
+    business_address[0].state                      string   State/province
+    business_address[0].postal_code                string   Postal code
+    representatives[0].roles                       string   DIRECTOR | BENEFICIAL_OWNER | SHAREHOLDER | ...
+    representatives[0].as_applicant                bool     true if this representative is the applicant
+    representatives[0].first_name                  string   First name
+    representatives[0].last_name                   string   Last name
+    representatives[0].nationality                 string   ISO 3166-1 alpha-2 country code
+    representatives[0].date_of_birth               string   Date of birth (YYYY-MM-DD)
+    representatives[0].identification.type         string   PASSPORT | ID_CARD | DRIVERS_LICENSE
+    representatives[0].identification.id_number    string   ID document number
+    representatives[0].identification.documents.front  string   ID front image (@+filepath for data URI)
+    representatives[0].residential_address.line1   string   Residential street address (required)
+    representatives[0].residential_address.city    string   Residential city (required)
+    representatives[0].residential_address.country string   ISO 3166-1 alpha-2 (required)
+    representatives[0].residential_address.postal_code string Residential postal code
+    documents[0].type                              string   CERTIFICATE_OF_INCORPORATION | MEMORANDUM_AND_ARTICLES | ...
+    documents[0].front                             string   Document image (@+filepath for data URI)
+    tos_acceptance.ip                              string   IPv4 address of user accepting ToS
+    tos_acceptance.date                            string   ISO 8601 datetime (e.g. 2026-01-01T00:00:00Z)
+    tos_acceptance.user_agent                      string   Browser user agent string
+    tos_acceptance.tos_agreement                   number   1 to accept (auto-converted to number)
 
-Examples:
+Parameters (INDIVIDUAL entity):
+  Required:
+    entity_type              string   INDIVIDUAL
+    name                     string   Display name
+    country                  string   ISO 3166-1 alpha-2 country code
+    contact_details          object   Contact information (email, phone)
+    person_details           object   Personal details (first_name, last_name, date_of_birth, nationality)
+    residential_address      object   Residential address (line1, city, state, postal_code, country)
+    documents                array    Identity documents (type, front)
+    tos_acceptance           object   Terms of service acceptance (ip, date, user_agent, tos_agreement)
+
+Example (COMPANY):
   uqpay account create \
-    -d entity_type=INDIVIDUAL \
-    -d name="John Doe" \
-    -d contact_details.email=john@example.com`
+    -d entity_type=COMPANY \
+    -d name="Acme Corp" \
+    -d country=SG \
+    -d contact_details.email=admin@acme.com \
+    -d contact_details.phone=+6591234567 \
+    -d business_details.legal_entity_name_english="Acme Corp Pte Ltd" \
+    -d business_details.incorporation_date=2020-01-01 \
+    -d business_details.registration_number=T99CC9999Z \
+    -d business_details.business_structure=LIMITED_COMPANY \
+    -d business_details.merchant_category_code=7372 \
+    -d business_details.estimated_worker_count=BS001 \
+    -d business_details.monthly_estimated_revenue.amount=TM001 \
+    -d business_details.monthly_estimated_revenue.currency=SGD \
+    -d "business_details.account_purpose[]=USE_API" \
+    -d "registration_address.line1=1 Raffles Place" \
+    -d registration_address.city=Singapore \
+    -d registration_address.state=SG \
+    -d registration_address.postal_code=048616 \
+    -d "business_address[0].line1=1 Raffles Place" \
+    -d "business_address[0].city=Singapore" \
+    -d "business_address[0].country=SG" \
+    -d "business_address[0].state=SG" \
+    -d "business_address[0].postal_code=048616" \
+    -d "representatives[0].roles=DIRECTOR" \
+    -d "representatives[0].as_applicant=true" \
+    -d "representatives[0].first_name=John" \
+    -d "representatives[0].last_name=Doe" \
+    -d "representatives[0].nationality=SG" \
+    -d "representatives[0].date_of_birth=1990-01-15" \
+    -d "representatives[0].identification.type=PASSPORT" \
+    -d "representatives[0].identification.id_number=E1234567" \
+    -d "representatives[0].identification.documents.front=@+./id_front.png" \
+    -d "representatives[0].address.line1=10 Anson Road" \
+    -d "representatives[0].address.city=Singapore" \
+    -d "representatives[0].address.country=SG" \
+    -d "representatives[0].address.postal_code=079903" \
+    -d "representatives[0].residential_address.line1=10 Anson Road" \
+    -d "representatives[0].residential_address.city=Singapore" \
+    -d "representatives[0].residential_address.country=SG" \
+    -d "representatives[0].residential_address.postal_code=079903" \
+    -d "documents[0].type=CERTIFICATE_OF_INCORPORATION" \
+    -d "documents[0].front=@+./cert.png" \
+    -d tos_acceptance.ip=192.168.1.1 \
+    -d tos_acceptance.date=2026-01-01T00:00:00Z \
+    -d tos_acceptance.user_agent=uqpay-cli \
+    -d tos_acceptance.tos_agreement=1`
 
 func NewAccountCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -146,6 +222,7 @@ func newAccountCreateCmd() *cobra.Command {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
 			}
+			dotparam.CoerceNumbers(body, "tos_agreement")
 			c := client.New(cfg)
 			resp, err := c.Post(context.Background(), "/v1/accounts", body)
 			if err != nil {
