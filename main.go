@@ -6,9 +6,11 @@ import (
 
 	"github.com/uqpay/uqpay-cli/cmd"
 	"github.com/uqpay/uqpay-cli/internal/apierr"
+	"github.com/uqpay/uqpay-cli/internal/update"
 )
 
 func main() {
+	update.CheckForUpdate()
 	root := cmd.NewRootCmd()
 	if err := root.Execute(); err != nil {
 		os.Exit(exitCodeFor(err))
