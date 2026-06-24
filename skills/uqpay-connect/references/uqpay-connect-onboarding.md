@@ -71,6 +71,7 @@ uqpay account create-sub \
   -d individual_info.phone_number=+447911123456 \
   -d individual_info.email_address=john@example.com \
   -d individual_info.date_of_birth=1990-01-15 \
+  -d individual_info.gender=MALE \
   -d individual_info.country_or_territory=GB \
   -d "individual_info.street_address=123 Baker Street" \
   -d individual_info.city=London \
@@ -80,6 +81,7 @@ uqpay account create-sub \
   -d "individual_info.industry=Information Technology/IT" \
   -d "individual_info.job_title=Business and administration professionals" \
   -d "individual_info.company_name=Acme Corp" \
+  -d individual_info.annual_income=85000 \
   -d identity_verification.identification_type=PASSPORT \
   -d identity_verification.identification_value=P12345678 \
   -d "identity_verification.identity_docs[0]=@+./passport.png" \

@@ -1,6 +1,6 @@
 {
   "name": "@uqpay/cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "UQPAY command-line tool for banking, issuing, and payment APIs",
   "bin": {
     "uqpay": "scripts/run.js"

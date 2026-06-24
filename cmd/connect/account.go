@@ -286,14 +286,17 @@ Parameters (INDIVIDUAL entity):
     individual_info.phone_number                     string   Phone with country code (e.g. +447911123456)
     individual_info.email_address                    string   Email address
     individual_info.date_of_birth                    string   Date of birth (YYYY-MM-DD)
+    individual_info.gender                            string   MALE | FEMALE (required effective 2026-07-02)
     individual_info.country_or_territory             string   ISO 3166-1 alpha-2 country of residence
     individual_info.street_address                   string   Street address
     individual_info.city                             string   City
+    individual_info.state                            string   State or province
     individual_info.postal_code                      string   Postal code
-    individual_info.employment_status                string   Employed | Self-Employed | Unemployed | Student | Retired | Homemaker | Other
-    individual_info.industry                         string   Industry (see docs for full list)
-    individual_info.job_title                        string   Job title (see docs for full list)
-    individual_info.company_name                     string   Company name (max 100 chars)
+    individual_info.employment_status                string   Employed | Self-Employed | Unemployed | Student | Retired | Homemaker | Other (required effective 2026-03-19)
+    individual_info.industry                         string   Industry (see docs for full list, required effective 2026-03-19)
+    individual_info.job_title                        string   Job title (see docs for full list, required effective 2026-03-19)
+    individual_info.company_name                     string   Company name (max 100 chars, required effective 2026-03-19)
+    individual_info.annual_income                    string   Annual income in USD, e.g. "85000" (required effective 2026-07-02)
     identity_verification.identification_type        string   PASSPORT | DRIVERS_LICENSE | NATIONAL_ID
     identity_verification.identification_value       string   ID document number
     identity_verification.identity_docs[]            string   Identity document image (base64 string, @+filepath, or file ID, repeatable)
@@ -309,9 +312,6 @@ Parameters (INDIVIDUAL entity):
     tos_acceptance.date                              string   Acceptance date (ISO 8601, e.g. 2026-04-07T00:00:00Z)
     tos_acceptance.user_agent                        string   Browser user agent string
     tos_acceptance.tos_agreement                     integer  1 to auto-sign TPSP agreement
-
-  Required (GB/US):
-    individual_info.state                            string   State or province (required for GB, US)
 
   Optional:
     individual_info.apartment_suite_or_floor         string   Apartment/suite/floor
@@ -355,14 +355,17 @@ Examples:
     -d individual_info.phone_number=+447911123456 \
     -d individual_info.email_address=john@example.com \
     -d individual_info.date_of_birth=1990-01-15 \
+    -d individual_info.gender=MALE \
     -d individual_info.country_or_territory=GB \
     -d "individual_info.street_address=123 Baker Street" \
     -d individual_info.city=London \
+    -d "individual_info.state=England" \
     -d individual_info.postal_code=W1U6RS \
     -d individual_info.employment_status=Employed \
     -d "individual_info.industry=Information Technology/IT" \
     -d "individual_info.job_title=Business and administration professionals" \
     -d "individual_info.company_name=Acme Corp." \
+    -d individual_info.annual_income=85000 \
     -d identity_verification.identification_type=PASSPORT \
     -d identity_verification.identification_value=P12345678 \
     -d "identity_verification.identity_docs[]=@+./id_front.png" \
