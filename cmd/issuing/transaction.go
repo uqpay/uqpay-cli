@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/uqpay/uqpay-cli/internal/client"
 	"github.com/uqpay/uqpay-cli/internal/cmdutil"
+	"github.com/uqpay/uqpay-cli/internal/dotparam"
 	"github.com/uqpay/uqpay-cli/internal/output"
 )
 
@@ -15,7 +16,32 @@ func newTransactionCmd() *cobra.Command {
 		Use:   "transaction",
 		Short: "Query issuing transactions",
 	}
-	cmd.AddCommand(newTransactionListCmd(), newTransactionGetCmd())
+	cmd.AddCommand(newTransactionListCmd(), newTransactionGetCmd(), newClaimUnsolicitedRefundCmd())
+	return cmd
+}
+
+func newClaimUnsolicitedRefundCmd() *cobra.Command {
+	var data []string
+	cmd := &cobra.Command{
+		Use: "claim-unsolicited-refund", Short: "Claim an unsolicited refund",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := cmdutil.LoadConfig()
+			if err != nil {
+				return err
+			}
+			body, err := dotparam.Parse(data)
+			if err != nil {
+				return err
+			}
+			resp, err := client.New(cfg).Post(context.Background(), "/v1/issuing/transactions/unsolicited_refund/release", body)
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			return output.Print(os.Stdout, resp, cfg.Output)
+		},
+	}
+	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "related_transaction_id and optional remark")
 	return cmd
 }
 

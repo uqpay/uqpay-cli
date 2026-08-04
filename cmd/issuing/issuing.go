@@ -15,6 +15,7 @@ func NewCmd() *cobra.Command {
 		newIssuingTransferCmd(),
 		newProductCmd(),
 		newReportCmd(),
+		newMerchantBrandCmd(),
 	)
 	return cmd
 }

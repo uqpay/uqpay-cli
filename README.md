@@ -32,6 +32,9 @@ The official [UQPAY](https://www.uqpay.com/) CLI tool — built for humans and A
 
 ### From npm (recommended)
 
+Requires Node.js 22+ for the npm installer. The installed `uqpay` binary does
+not require Node.js at runtime.
+
 ```bash
 # Install CLI
 npm install -g @uqpay/cli
