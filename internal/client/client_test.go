@@ -20,7 +20,7 @@ import (
 func newTestClient(t *testing.T, apiServer *httptest.Server) *client.Client {
 	t.Helper()
 	cfg := &config.Config{
-		ClientID: "",  // empty = no token fetch attempted
+		ClientID: "", // empty = no token fetch attempted
 		APIKey:   "",
 		Env:      "sandbox",
 	}
@@ -77,6 +77,30 @@ func TestPostSuccess(t *testing.T) {
 	json.Unmarshal(data, &resp)
 	if resp["id"] != "card_123" {
 		t.Errorf("unexpected response: %v", resp)
+	}
+}
+
+func TestConfiguredClientIDIsSentOnBusinessRequests(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.URL.Path == "/v1/connect/token" {
+			json.NewEncoder(w).Encode(map[string]any{
+				"auth_token": "token_123",
+				"expired_at": time.Now().Add(time.Hour).Unix(),
+			})
+			return
+		}
+		if got := r.Header.Get("x-client-id"); got != "client_123" {
+			t.Errorf("x-client-id = %q, want client_123", got)
+		}
+		json.NewEncoder(w).Encode(map[string]any{"ok": true})
+	}))
+	defer srv.Close()
+
+	cfg := &config.Config{ClientID: "client_123", APIKey: "api_key_123", Env: "sandbox"}
+	c := client.NewWithBaseURL(cfg, srv.URL, t.TempDir())
+	if _, err := c.Get(context.Background(), "/v2/payment/balances", nil); err != nil {
+		t.Fatal(err)
 	}
 }
 

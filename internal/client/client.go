@@ -150,6 +150,16 @@ func (c *Client) PostH(ctx context.Context, path string, body map[string]any, he
 	return c.doAttempt(ctx, http.MethodPost, path, nil, body, headers, true, 0, false)
 }
 
+// Delete performs a DELETE request with an optional JSON body.
+func (c *Client) Delete(ctx context.Context, path string, body map[string]any) ([]byte, error) {
+	return c.doAttempt(ctx, http.MethodDelete, path, nil, body, nil, true, 0, false)
+}
+
+// DeleteH performs a DELETE request with an optional JSON body and extra headers.
+func (c *Client) DeleteH(ctx context.Context, path string, body map[string]any, headers map[string]string) ([]byte, error) {
+	return c.doAttempt(ctx, http.MethodDelete, path, nil, body, headers, true, 0, false)
+}
+
 // PostMultipartH uploads a file via multipart/form-data POST.
 // The file is sent as the "file" field. Extra headers (e.g. x-on-behalf-of) can be passed.
 func (c *Client) PostMultipartH(ctx context.Context, path string, filePath string, query map[string]string, headers map[string]string) ([]byte, error) {
@@ -198,6 +208,9 @@ func (c *Client) PostMultipartH(ctx context.Context, path string, filePath strin
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("x-idempotency-key", uuid.New().String())
+	if c.cfg.ClientID != "" {
+		req.Header.Set("x-client-id", c.cfg.ClientID)
+	}
 	for k, v := range headers {
 		if v != "" {
 			req.Header.Set(k, v)
@@ -273,6 +286,9 @@ func (c *Client) doAttempt(
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if c.cfg.ClientID != "" {
+		req.Header.Set("x-client-id", c.cfg.ClientID)
+	}
 	if withIdempotency {
 		req.Header.Set("x-idempotency-key", uuid.New().String())
 	}

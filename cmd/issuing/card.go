@@ -151,6 +151,12 @@ func NewCardCmd() *cobra.Command {
 		newCardAssignCmd(),
 		newCardRechargeCmd(),
 		newCardWithdrawCmd(),
+		newCardElevateLimitCmd(),
+		newCardEnrollProtectionCmd(),
+		newCardRemoveProtectionCmd(),
+		newCardManagePinCmd(),
+		newCardListArtsCmd(),
+		newCardSetDefaultArtCmd(),
 	)
 	return cmd
 }

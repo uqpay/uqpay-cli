@@ -15,6 +15,7 @@ func NewCmd() *cobra.Command {
 		newRefundCmd(),
 		newPaymentBalanceCmd(),
 		newSettlementCmd(),
+		newTerminalCmd(),
 	)
 	return cmd
 }

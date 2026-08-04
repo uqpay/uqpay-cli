@@ -52,6 +52,10 @@ func NewRootCmd() *cobra.Command {
 	accountCmd.GroupID = "other"
 	root.AddCommand(accountCmd)
 
+	rfiCmd := connect.NewRfiCmd()
+	rfiCmd.GroupID = "other"
+	root.AddCommand(rfiCmd)
+
 	configCmd := newConfigCmd()
 	configCmd.GroupID = "other"
 	root.AddCommand(configCmd)
