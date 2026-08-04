@@ -173,4 +173,4 @@ jobs:
         if: steps.registry.outputs.exists == 'false'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish release-artifacts/*.tgz --access public
+        run: npm publish ./release-artifacts/*.tgz --access public
