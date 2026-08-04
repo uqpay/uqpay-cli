@@ -9,10 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  goreleaser:
+  verify:
     runs-on: ubuntu-22.04
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,7 +20,74 @@ jobs:
         with:
           go-version: '1.21'
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify release tag and version
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "release tag is not strict SemVer: $GITHUB_REF_NAME" >&2
+            exit 1
+          fi
+          VERSION=$(node -p "require('./package.json').version")
+          test "$GITHUB_REF_NAME" = "v$VERSION"
+
+      - name: Verify tag commit is on main
+        run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - name: Run full test suite
+        run: go test ./...
+
+      - name: Run static checks
+        run: go vet ./...
+
+      - name: Verify GoReleaser configuration
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: check
+
+      - name: Verify artifact version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p .release-check .release-artifacts
+          go build -ldflags "-X github.com/uqpay/uqpay-cli/internal/build.Version=$VERSION -X github.com/uqpay/uqpay-cli/internal/build.Date=ci" -o .release-check/uqpay .
+          .release-check/uqpay --version | grep -F "$VERSION"
+          npm pack --pack-destination .release-artifacts --json > .release-artifacts/pack.json
+          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('.release-artifacts/pack.json'))[0]; const v=require('./package.json').version; if(p.version!==v) throw new Error('packed version '+p.version+' != '+v)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-package
+          path: .release-artifacts/*.tgz
+          if-no-files-found: error
+
+  goreleaser:
+    needs: verify
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whether binary release already exists
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' 2>/dev/null | grep -Fxq 'checksums.txt'; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run GoReleaser
+        if: steps.release.outputs.exists == 'false'
         uses: goreleaser/goreleaser-action@v6
         with:
           version: '~> v2'
@@ -31,17 +96,31 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish-npm:
-    needs: goreleaser
+    needs: [verify, goreleaser]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package
+          path: .release-artifacts
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Check whether npm version already exists
+        id: registry
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if npm view "@uqpay/cli@$VERSION" version --registry https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to npm
+        if: steps.registry.outputs.exists == 'false'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: npm publish .release-artifacts/*.tgz --access public

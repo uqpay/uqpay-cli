@@ -1,6 +1,9 @@
 package dotparam_test
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -8,8 +11,15 @@ import (
 )
 
 func TestFileEncoding(t *testing.T) {
+	filePath := filepath.Join(t.TempDir(), "id_front.png")
+	content := make([]byte, 80)
+	copy(content, []byte{0x89, 'P', 'N', 'G', '\r', '\n', 0x1a, '\n'})
+	if err := os.WriteFile(filePath, content, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
 	// Default @filepath: pure base64 (no data URI prefix)
-	result, err := dotparam.Parse([]string{"front_file=@/tmp/id_front.png"})
+	result, err := dotparam.Parse([]string{fmt.Sprintf("front_file=@%s", filePath)})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,7 +33,7 @@ func TestFileEncoding(t *testing.T) {
 	t.Logf("pure base64: %s...", v[:40])
 
 	// @+filepath: data URI format
-	result2, err := dotparam.Parse([]string{"identity_docs[]=@+/tmp/id_front.png"})
+	result2, err := dotparam.Parse([]string{fmt.Sprintf("identity_docs[]=@+%s", filePath)})
 	if err != nil {
 		t.Fatal(err)
 	}
