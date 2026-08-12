@@ -53,7 +53,9 @@ Banking Wallet
 | Command | Method | Description |
 |---------|--------|-------------|
 | `uqpay banking virtual-account list` | GET (flags) | List virtual accounts |
-| `uqpay banking virtual-account create` | POST (-d) | Create a virtual account |
+| `uqpay banking virtual-account create --idempotency-key <key> -d country=SG -d currency=USD` | POST (-d) | Submit a Virtual Account application |
+| `uqpay banking virtual-account application list` | GET (flags) | List application summaries (not issued accounts) |
+| `uqpay banking virtual-account application retrieve <application-id>` | GET | Retrieve complete application data |
 | `uqpay banking balance list` | GET (flags) | List balances across all currencies |
 | `uqpay banking balance get <currency>` | GET | Get balance for a specific currency |
 | `uqpay banking balance transactions` | GET (flags) | List balance transactions (ledger entries) |

@@ -5,6 +5,8 @@ import "fmt"
 // APIError represents a non-2xx response from the UQPAY API.
 type APIError struct {
 	ErrorType  string `json:"error"`
+	APIType    string `json:"type,omitempty"`
+	APICode    string `json:"api_code,omitempty"`
 	Message    string `json:"message"`
 	StatusCode int    `json:"code"`
 }
