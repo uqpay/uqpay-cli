@@ -77,6 +77,26 @@ uqpay issuing card list
 uqpay payment intent list
 ```
 
+Virtual Account applications are tracked separately from issued bank details:
+
+```bash
+# Submit one application. Omit payment_method to evaluate LOCAL and SWIFT.
+uqpay banking virtual-account create \
+  --idempotency-key va-application-001 \
+  -d country=SG -d currency=USD -d nickname=Collections
+
+# List application summaries, then retrieve the complete current application.
+uqpay banking virtual-account application list --page-num 1 --page-size 50
+uqpay banking virtual-account application retrieve <application-id> -o json
+
+# Existing command: list issued Virtual Account bank details, not applications.
+uqpay banking virtual-account list --page-num 1 --page-size 50
+```
+
+For connected accounts, add `--on-behalf-of <account-id>` to all three flows.
+Reuse an idempotency key only for the same normalized Create request. Create
+returns HTTP 200 application data; usable bank details arrive asynchronously.
+
 Or inline without config file:
 
 ```bash

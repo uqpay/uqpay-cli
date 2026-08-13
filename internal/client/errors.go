@@ -18,6 +18,19 @@ type apiBody struct {
 	Error   string `json:"error"` // 401 auth middleware: {"error": "..."}
 }
 
+func stringifyAPICode(code any) string {
+	switch v := code.(type) {
+	case string:
+		return v
+	case float64:
+		return fmt.Sprintf("%g", v)
+	case nil:
+		return ""
+	default:
+		return fmt.Sprint(v)
+	}
+}
+
 // parseAPIError converts a non-2xx response into *apierr.APIError.
 // Always uses HTTP status as authoritative — never body.code.
 func parseAPIError(status int, body []byte) *apierr.APIError {
@@ -34,6 +47,8 @@ func parseAPIError(status int, body []byte) *apierr.APIError {
 
 	return &apierr.APIError{
 		ErrorType:  apierr.ErrorTypeFromStatus(status),
+		APIType:    b.Type,
+		APICode:    stringifyAPICode(b.Code),
 		Message:    apierr.UserMessage(status, msg),
 		StatusCode: status,
 	}

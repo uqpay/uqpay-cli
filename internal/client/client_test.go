@@ -80,6 +80,36 @@ func TestPostSuccess(t *testing.T) {
 	}
 }
 
+func TestVirtualAccountCreatePreservesExplicitIdempotencyKeyAcrossReplay(t *testing.T) {
+	var keys []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/virtual/accounts" || r.Method != http.MethodPost {
+			t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+		keys = append(keys, r.Header.Get("x-idempotency-key"))
+		if got := r.Header.Get("x-on-behalf-of"); got != "acct-sub" {
+			t.Errorf("x-on-behalf-of = %q", got)
+		}
+		json.NewEncoder(w).Encode(map[string]any{"data": map[string]any{
+			"application_id": "app-1", "public_version": 1, "country": "SG",
+			"currency": "USD", "status": "SUBMITTED", "results": []any{},
+		}})
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	headers := map[string]string{"x-idempotency-key": "va-retry-001", "x-on-behalf-of": "acct-sub"}
+	body := map[string]any{"country": "SG", "currency": "USD"}
+	for i := 0; i < 2; i++ {
+		if _, err := c.PostH(context.Background(), "/v1/virtual/accounts", body, headers); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if len(keys) != 2 || keys[0] != "va-retry-001" || keys[1] != keys[0] {
+		t.Fatalf("idempotent replay keys = %#v", keys)
+	}
+}
+
 func TestConfiguredClientIDIsSentOnBusinessRequests(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -146,6 +176,32 @@ func TestAPIError404(t *testing.T) {
 	}
 	if apiErr.Message != "Card does not exist" {
 		t.Errorf("Message = %q", apiErr.Message)
+	}
+	if apiErr.APIType != "not_found" || apiErr.APICode != "card_not_found" {
+		t.Errorf("strict API fields lost: type=%q code=%q", apiErr.APIType, apiErr.APICode)
+	}
+}
+
+func TestVirtualAccountApplicationNotFoundPreservesStrict400Body(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]any{
+			"type": "not_found", "code": "virtual_account_application_not_found",
+			"message": "Virtual account application not found",
+		})
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	_, err := c.Get(context.Background(), "/v1/virtual/applications/app-missing", nil)
+	var apiErr *apierr.APIError
+	if !errors.As(err, &apiErr) {
+		t.Fatalf("expected APIError, got %T", err)
+	}
+	if apiErr.StatusCode != 400 || apiErr.APIType != "not_found" ||
+		apiErr.APICode != "virtual_account_application_not_found" ||
+		apiErr.Message != "Virtual account application not found" {
+		t.Fatalf("unexpected strict error: %#v", apiErr)
 	}
 }
 

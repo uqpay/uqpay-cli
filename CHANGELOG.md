@@ -5,6 +5,25 @@ All notable changes to `@uqpay/cli` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `virtual-account application list` and `virtual-account application retrieve`
+  commands, with pagination, status/country/currency filters, and connected-account
+  support.
+
+### Changed
+
+- Virtual Account Create help and examples now describe required `country`, one
+  `currency`, optional `LOCAL`/`SWIFT`/omitted method, nickname, HTTP 200
+  application output, and asynchronous lifecycle semantics.
+- Virtual Account Create continues to require and forward `x-idempotency-key`
+  through the existing `--idempotency-key` option; this is retained from the
+  previous Create contract, not introduced by the application contract.
+- Structured API errors retain the service's strict `type`, string `code`, and
+  `message`, including HTTP 400 application not-found/cross-account responses.
+
 ## [1.2.0]
 
 This bootstrap alignment release establishes the shared stable `1.2` capability

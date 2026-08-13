@@ -2,6 +2,8 @@ package banking
 
 import (
 	"context"
+	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -19,6 +21,7 @@ func newVirtualAccountCmd() *cobra.Command {
 	cmd.AddCommand(
 		newVirtualAccountListCmd(),
 		newVirtualAccountCreateCmd(),
+		newVirtualAccountApplicationCmd(),
 	)
 	return cmd
 }
@@ -63,22 +66,26 @@ Flags:
 
 func newVirtualAccountCreateCmd() *cobra.Command {
 	var data []string
-	var onBehalfOf string
+	var onBehalfOf, idempotencyKey string
 	cmd := &cobra.Command{
 		Use:   "create",
-		Short: "Create a virtual account",
-		Long: `Create a new virtual account.
+		Short: "Submit a Virtual Account application",
+		Long: `Submit a Virtual Account application.
 
 Parameters:
   Required:
-    currency         string   ISO 4217 currency code(s), comma-separated (e.g. USD,SGD)
+    country          string   ISO 3166-1 alpha-2 country code
+    currency         string   One ISO 4217 currency code
+    --idempotency-key         Stable x-idempotency-key value (1-64 characters)
 
   Optional:
-    payment_method   string   LOCAL | SWIFT
+    payment_method   string   LOCAL | SWIFT | omitted/empty to evaluate both
+    nickname         string   Application label (maximum 255 characters)
+    --on-behalf-of            Sub-account ID sent as x-on-behalf-of
 
 Examples:
-  uqpay virtual-account create -d currency=SGD
-  uqpay virtual-account create -d currency=USD,SGD -d payment_method=LOCAL`,
+  uqpay banking virtual-account create --idempotency-key va-001 -d country=SG -d currency=USD
+  uqpay banking virtual-account create --idempotency-key va-002 -d country=BH -d currency=GBP -d payment_method=SWIFT -d nickname=Collections`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
 			if err != nil {
@@ -90,9 +97,17 @@ Examples:
 				cmdutil.WriteError(err, cfg.Output)
 				return err
 			}
+			if len(idempotencyKey) == 0 || len(idempotencyKey) > 64 {
+				err := fmt.Errorf("--idempotency-key must contain between 1 and 64 characters")
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
 			c := client.New(cfg)
 			resp, err := c.PostH(context.Background(), "/v1/virtual/accounts", body,
-				map[string]string{"x-on-behalf-of": onBehalfOf})
+				map[string]string{
+					"x-idempotency-key": idempotencyKey,
+					"x-on-behalf-of":    onBehalfOf,
+				})
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
@@ -101,6 +116,91 @@ Examples:
 		},
 	}
 	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "Key=value pairs (repeatable), supports dot notation for nested fields")
+	cmd.Flags().StringVar(&idempotencyKey, "idempotency-key", "", "Stable x-idempotency-key value (required, maximum 64 characters)")
+	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID sent as x-on-behalf-of")
+	_ = cmd.MarkFlagRequired("idempotency-key")
+	return cmd
+}
+
+func newVirtualAccountApplicationCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "application",
+		Short: "Track Virtual Account applications (separate from issued accounts)",
+	}
+	cmd.AddCommand(
+		newVirtualAccountApplicationListCmd(),
+		newVirtualAccountApplicationRetrieveCmd(),
+	)
+	return cmd
+}
+
+func newVirtualAccountApplicationListCmd() *cobra.Command {
+	var pageNumber, pageSize, status, country, currency, onBehalfOf string
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List Virtual Account application summaries",
+		Long: `List Virtual Account applications, newest first.
+
+This is not the issued Virtual Account list. Page number and page size are sent
+on every request. Optional status, country, and currency filters are combined.
+Status: SUBMITTED | PARTIALLY_COMPLETED | COMPLETED | FAILED | CLOSED.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := cmdutil.LoadConfig()
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			c := client.New(cfg)
+			data, err := c.GetH(context.Background(), "/v1/virtual/applications", map[string]string{
+				"page_number": pageNumber,
+				"page_size":   pageSize,
+				"status":      status,
+				"country":     country,
+				"currency":    currency,
+			}, map[string]string{"x-on-behalf-of": onBehalfOf})
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			return output.Print(os.Stdout, data, cfg.Output)
+		},
+	}
+	cmd.Flags().StringVar(&pageNumber, "page-num", "1", "Page number (minimum 1)")
+	cmd.Flags().StringVar(&pageSize, "page-size", "50", "Applications per page (1-100)")
+	cmd.Flags().StringVar(&status, "status", "", "Filter by application status")
+	cmd.Flags().StringVar(&country, "country", "", "Filter by ISO-2 country")
+	cmd.Flags().StringVar(&currency, "currency", "", "Filter by ISO-3 currency")
 	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID to act on behalf of")
+	return cmd
+}
+
+func newVirtualAccountApplicationRetrieveCmd() *cobra.Command {
+	var onBehalfOf string
+	cmd := &cobra.Command{
+		Use:     "retrieve <application-id>",
+		Aliases: []string{"get"},
+		Short:   "Retrieve the complete current application",
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := cmdutil.LoadConfig()
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			c := client.New(cfg)
+			data, err := c.GetH(
+				context.Background(),
+				"/v1/virtual/applications/"+url.PathEscape(args[0]),
+				nil,
+				map[string]string{"x-on-behalf-of": onBehalfOf},
+			)
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			return output.Print(os.Stdout, data, cfg.Output)
+		},
+	}
+	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID used for the application")
 	return cmd
 }

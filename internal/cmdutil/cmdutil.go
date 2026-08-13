@@ -48,7 +48,11 @@ func WriteError(err error, outputFmt string) {
 	switch {
 	case errors.As(err, &apiErr):
 		if outputFmt == "json" {
-			fmt.Fprintf(os.Stderr, "{\"error\":%q,\"message\":%q,\"code\":%d}\n", apiErr.ErrorType, apiErr.Message, apiErr.StatusCode)
+			if apiErr.APIType != "" || apiErr.APICode != "" {
+				fmt.Fprintf(os.Stderr, "{\"type\":%q,\"code\":%q,\"message\":%q}\n", apiErr.APIType, apiErr.APICode, apiErr.Message)
+			} else {
+				fmt.Fprintf(os.Stderr, "{\"error\":%q,\"message\":%q,\"code\":%d}\n", apiErr.ErrorType, apiErr.Message, apiErr.StatusCode)
+			}
 		} else {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", apiErr.Message)
 		}
