@@ -76,11 +76,12 @@ Parameters:
   Required:
     country          string   ISO 3166-1 alpha-2 country code
     currency         string   One ISO 4217 currency code
-    --idempotency-key         Stable retry key (1-64 characters)
+    --idempotency-key         Stable x-idempotency-key value (1-64 characters)
 
   Optional:
     payment_method   string   LOCAL | SWIFT | omitted/empty to evaluate both
     nickname         string   Application label (maximum 255 characters)
+    --on-behalf-of            Sub-account ID sent as x-on-behalf-of
 
 Examples:
   uqpay banking virtual-account create --idempotency-key va-001 -d country=SG -d currency=USD
@@ -115,8 +116,8 @@ Examples:
 		},
 	}
 	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "Key=value pairs (repeatable), supports dot notation for nested fields")
-	cmd.Flags().StringVar(&idempotencyKey, "idempotency-key", "", "Stable application retry key (required, maximum 64 characters)")
-	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID to act on behalf of")
+	cmd.Flags().StringVar(&idempotencyKey, "idempotency-key", "", "Stable x-idempotency-key value (required, maximum 64 characters)")
+	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID sent as x-on-behalf-of")
 	_ = cmd.MarkFlagRequired("idempotency-key")
 	return cmd
 }
