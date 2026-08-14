@@ -185,6 +185,12 @@ func TestVirtualAccountApplicationCreateOutputPreservesSkippedResult(t *testing.
 		}
 	}`)
 	data := got["data"].(map[string]any)
+	if _, exists := data["account_id"]; exists {
+		t.Fatalf("Gateway Create output unexpectedly contains webhook-only account_id: %#v", data)
+	}
+	if _, exists := data["direct_id"]; exists {
+		t.Fatalf("Gateway Create output unexpectedly contains webhook-only direct_id: %#v", data)
+	}
 	results := data["results"].([]any)
 	skipped := results[0].(map[string]any)
 	if skipped["status"] != "SKIPPED" {
@@ -237,7 +243,14 @@ func TestVirtualAccountApplicationRetrieveOutputPreservesFailureAndBankDetails(t
 			]
 		}
 	}`)
-	results := got["data"].(map[string]any)["results"].([]any)
+	data := got["data"].(map[string]any)
+	if _, exists := data["account_id"]; exists {
+		t.Fatalf("Gateway Retrieve output unexpectedly contains webhook-only account_id: %#v", data)
+	}
+	if _, exists := data["direct_id"]; exists {
+		t.Fatalf("Gateway Retrieve output unexpectedly contains webhook-only direct_id: %#v", data)
+	}
+	results := data["results"].([]any)
 	failedError := results[0].(map[string]any)["error"].(map[string]any)
 	if failedError["code"] != "VA_PROVISIONING_FAILED" ||
 		failedError["message"] != "Virtual account provisioning failed" {
@@ -271,6 +284,12 @@ func TestVirtualAccountApplicationListOutputPreservesEnvelopeAndSummary(t *testi
 		t.Fatalf("pagination envelope lost: %#v", got)
 	}
 	summary := got["data"].([]any)[0].(map[string]any)
+	if _, exists := summary["account_id"]; exists {
+		t.Fatalf("Gateway List summary unexpectedly contains webhook-only account_id: %#v", summary)
+	}
+	if _, exists := summary["direct_id"]; exists {
+		t.Fatalf("Gateway List summary unexpectedly contains webhook-only direct_id: %#v", summary)
+	}
 	for key, want := range map[string]any{
 		"application_id": "app-summary",
 		"public_version": float64(2),

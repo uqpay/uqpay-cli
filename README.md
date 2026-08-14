@@ -97,6 +97,11 @@ For connected accounts, add `--on-behalf-of <account-id>` to all three flows.
 Reuse an idempotency key only for the same normalized Create request. Create
 returns HTTP 200 application data; usable bank details arrive asynchronously.
 
+The CLI does not parse or type webhook deliveries. Use a customer webhook
+handler or an SDK verifier for that flow. The webhook-only routing fields
+`account_id` and `direct_id` are not added to CLI Create, List, or Retrieve API
+output; `-o json` preserves the Gateway response structure as received.
+
 Or inline without config file:
 
 ```bash

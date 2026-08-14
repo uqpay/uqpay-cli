@@ -30,13 +30,20 @@ automation must migrate before adopting this version.
 - Structured API errors retain the service's strict `type`, string `code`, and
   `message`, including HTTP 400 application not-found/cross-account responses.
 
+### Documentation
+
+- Clarified that the CLI has no webhook parser and does not add webhook-only
+  `account_id` or `direct_id` fields to Gateway Virtual Account application API
+  output. JSON output continues to preserve the response structure as received.
+
 ### Breaking
 
 - Virtual Account Create automation must pass `--country`, send one currency,
   and consume HTTP 200 application JSON instead of the previous HTTP 202
   `message` and `request_id` output.
-- Webhook-driven automation must correlate by `application_id` and apply only
-  higher `public_version` values.
+- The CLI does not parse webhook deliveries. Webhook-driven automation outside
+  the CLI must correlate by `application_id` and apply only higher
+  `public_version` values.
 
 ### Migration
 
