@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0]
+
+This major release replaces the previous Virtual Account Create output and
+workflow with the Virtual Account application lifecycle contract. Existing CLI
+automation must migrate before adopting this version.
+
 ### Added
 
 - `virtual-account application list` and `virtual-account application retrieve`
@@ -23,6 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   previous Create contract, not introduced by the application contract.
 - Structured API errors retain the service's strict `type`, string `code`, and
   `message`, including HTTP 400 application not-found/cross-account responses.
+
+### Breaking
+
+- Virtual Account Create automation must pass `--country`, send one currency,
+  and consume HTTP 200 application JSON instead of the previous HTTP 202
+  `message` and `request_id` output.
+- Webhook-driven automation must correlate by `application_id` and apply only
+  higher `public_version` values.
+
+### Migration
+
+- Install with `npm install --global @uqpay/cli@2.0.0` and follow the
+  [Virtual Account migration guide](https://developers.uqpay.com/global-account/v1.6/guide/migrate-to-virtual-account-applications).
 
 ## [1.2.0]
 
