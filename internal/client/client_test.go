@@ -5,9 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -251,6 +255,198 @@ func TestRetryOn429(t *testing.T) {
 		t.Errorf("expected 3 attempts, got %d", attempts)
 	}
 	_ = data
+}
+
+func TestWriteRetriesReuseAutomaticIdempotencyKey(t *testing.T) {
+	var keys []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		keys = append(keys, r.Header.Get("x-idempotency-key"))
+		if len(keys) < 3 {
+			w.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(w).Encode(map[string]any{"message": "rate limited"})
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]any{"id": "ok"})
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	c.SetRetryDelay(time.Millisecond)
+	if _, err := c.Post(context.Background(), "/v1/write", map[string]any{"amount": "1.00"}); err != nil {
+		t.Fatal(err)
+	}
+	if len(keys) != 3 || keys[0] == "" || keys[1] != keys[0] || keys[2] != keys[0] {
+		t.Fatalf("write retry keys = %#v", keys)
+	}
+}
+
+func TestWriteRetryPreservesCallerIdempotencyKey(t *testing.T) {
+	var keys []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		keys = append(keys, r.Header.Get("x-idempotency-key"))
+		if len(keys) == 1 {
+			w.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(w).Encode(map[string]any{"message": "rate limited"})
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]any{"id": "ok"})
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	c.SetRetryDelay(time.Millisecond)
+	headers := map[string]string{"X-Idempotency-Key": "caller-stable-key"}
+	if _, err := c.PostH(context.Background(), "/v1/write", map[string]any{"amount": "1.00"}, headers); err != nil {
+		t.Fatal(err)
+	}
+	if len(keys) != 2 || keys[0] != "caller-stable-key" || keys[1] != keys[0] {
+		t.Fatalf("caller retry keys = %#v", keys)
+	}
+}
+
+func TestTokenRefreshReusesWriteIdempotencyKey(t *testing.T) {
+	var tokenRequests int
+	var writeKeys []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/v1/connect/token" {
+			tokenRequests++
+			json.NewEncoder(w).Encode(map[string]any{
+				"auth_token": fmt.Sprintf("token-%d", tokenRequests),
+				"expired_at": time.Now().Add(time.Hour).Unix(),
+			})
+			return
+		}
+		writeKeys = append(writeKeys, r.Header.Get("x-idempotency-key"))
+		if len(writeKeys) == 1 {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]any{"error": "token has expired"})
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]any{"id": "ok"})
+	}))
+	defer srv.Close()
+
+	cfg := &config.Config{ClientID: "client", APIKey: "api-key", Env: "sandbox"}
+	c := client.NewWithBaseURL(cfg, srv.URL, t.TempDir())
+	if _, err := c.Post(context.Background(), "/v1/write", map[string]any{"amount": "1.00"}); err != nil {
+		t.Fatal(err)
+	}
+	if tokenRequests != 2 {
+		t.Fatalf("token requests = %d, want 2", tokenRequests)
+	}
+	if len(writeKeys) != 2 || writeKeys[0] == "" || writeKeys[1] != writeKeys[0] {
+		t.Fatalf("token refresh write keys = %#v", writeKeys)
+	}
+}
+
+func TestAmbiguousWriteNetworkFailureRequiresReconciliationWithoutRetry(t *testing.T) {
+	var attempts atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts.Add(1)
+		hijacker, ok := w.(http.Hijacker)
+		if !ok {
+			t.Fatal("test server does not support hijacking")
+		}
+		conn, _, err := hijacker.Hijack()
+		if err != nil {
+			t.Fatal(err)
+		}
+		conn.Close()
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	c.SetRetryDelay(time.Millisecond)
+	_, err := c.Post(context.Background(), "/v1/write", map[string]any{"amount": "1.00"})
+	var reconcileErr *apierr.ReconcileRequiredError
+	if !errors.As(err, &reconcileErr) {
+		t.Fatalf("expected ReconcileRequiredError, got %T: %v", err, err)
+	}
+	if got := attempts.Load(); got != 1 {
+		t.Fatalf("ambiguous write attempts = %d, want 1", got)
+	}
+	if reconcileErr.Method != http.MethodPost || reconcileErr.Path != "/v1/write" || reconcileErr.IdempotencyKey == "" {
+		t.Fatalf("unexpected reconcile context: %#v", reconcileErr)
+	}
+}
+
+func TestAmbiguousWriteServerErrorRequiresReconciliationWithoutRetry(t *testing.T) {
+	var attempts int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]any{"message": "internal error"})
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	c.SetRetryDelay(time.Millisecond)
+	_, err := c.Post(context.Background(), "/v1/write", map[string]any{"amount": "1.00"})
+	var reconcileErr *apierr.ReconcileRequiredError
+	if !errors.As(err, &reconcileErr) {
+		t.Fatalf("expected ReconcileRequiredError, got %T: %v", err, err)
+	}
+	if attempts != 1 {
+		t.Fatalf("ambiguous 5xx write attempts = %d, want 1", attempts)
+	}
+}
+
+func TestAmbiguousWriteResponseReadFailureRequiresReconciliationWithoutRetry(t *testing.T) {
+	var attempts int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		w.Header().Set("Content-Length", "100")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"id":"partial"}`))
+	}))
+	defer srv.Close()
+
+	c := newTestClient(t, srv)
+	_, err := c.Delete(context.Background(), "/v1/write", nil)
+	var reconcileErr *apierr.ReconcileRequiredError
+	if !errors.As(err, &reconcileErr) {
+		t.Fatalf("expected ReconcileRequiredError, got %T: %v", err, err)
+	}
+	if attempts != 1 {
+		t.Fatalf("ambiguous response-read attempts = %d, want 1", attempts)
+	}
+}
+
+func TestAmbiguousMultipartFailurePreservesCallerKeyForReconciliation(t *testing.T) {
+	var attempts atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts.Add(1)
+		if got := r.Header.Get("x-idempotency-key"); got != "upload-stable-key" {
+			t.Errorf("x-idempotency-key = %q", got)
+		}
+		hijacker := w.(http.Hijacker)
+		conn, _, err := hijacker.Hijack()
+		if err != nil {
+			t.Fatal(err)
+		}
+		conn.Close()
+	}))
+	defer srv.Close()
+
+	filePath := filepath.Join(t.TempDir(), "document.txt")
+	if err := os.WriteFile(filePath, []byte("test"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	c := newTestClient(t, srv)
+	_, err := c.PostMultipartH(
+		context.Background(),
+		"/v1/files/upload",
+		filePath,
+		nil,
+		map[string]string{"x-idempotency-key": "upload-stable-key"},
+	)
+	var reconcileErr *apierr.ReconcileRequiredError
+	if !errors.As(err, &reconcileErr) {
+		t.Fatalf("expected ReconcileRequiredError, got %T: %v", err, err)
+	}
+	if attempts.Load() != 1 || reconcileErr.IdempotencyKey != "upload-stable-key" {
+		t.Fatalf("unexpected multipart reconcile context: attempts=%d error=%#v", attempts.Load(), reconcileErr)
+	}
 }
 
 func TestRetryExhausted(t *testing.T) {

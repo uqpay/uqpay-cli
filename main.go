@@ -29,6 +29,10 @@ func exitCodeFor(err error) int {
 	if errors.As(err, &netErr) {
 		return 3
 	}
+	var reconcileErr *apierr.ReconcileRequiredError
+	if errors.As(err, &reconcileErr) {
+		return 5
+	}
 	var cfgErr *apierr.ConfigError
 	if errors.As(err, &cfgErr) {
 		return 2

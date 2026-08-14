@@ -97,6 +97,14 @@ For connected accounts, add `--on-behalf-of <account-id>` to all three flows.
 Reuse an idempotency key only for the same normalized Create request. Create
 returns HTTP 200 application data; usable bank details arrive asynchronously.
 
+For all mutating commands, the CLI keeps one `x-idempotency-key` across safe
+HTTP retries such as token refresh and rate limiting. If a connection failure,
+response-read failure, or HTTP 5xx response leaves the remote result uncertain,
+the CLI does not automatically replay the write. JSON output reports
+`error: "reconcile_required"` together with `method`, `path`, and
+`idempotency_key`; inspect the corresponding resource before deciding whether
+to submit another logical request.
+
 Successful Gateway Create and Retrieve application data and each List summary
 include required `account_id` and `direct_id` fields. `account_id` is the UUID of
 the account that owns the application. `direct_id` is an ordinary string: `"0"`

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/uqpay/uqpay-cli/internal/apierr"
@@ -42,37 +43,64 @@ func LoadConfig() (*config.Config, error) {
 }
 
 func WriteError(err error, outputFmt string) {
+	WriteErrorTo(os.Stderr, err, outputFmt)
+}
+
+// WriteErrorTo writes a stable human- or machine-readable representation of an error.
+func WriteErrorTo(w io.Writer, err error, outputFmt string) {
 	var apiErr *apierr.APIError
 	var netErr *apierr.NetworkError
+	var reconcileErr *apierr.ReconcileRequiredError
 	var cfgErr *apierr.ConfigError
 	switch {
 	case errors.As(err, &apiErr):
 		if outputFmt == "json" {
 			if apiErr.APIType != "" || apiErr.APICode != "" {
-				fmt.Fprintf(os.Stderr, "{\"type\":%q,\"code\":%q,\"message\":%q}\n", apiErr.APIType, apiErr.APICode, apiErr.Message)
+				fmt.Fprintf(w, "{\"type\":%q,\"code\":%q,\"message\":%q}\n", apiErr.APIType, apiErr.APICode, apiErr.Message)
 			} else {
-				fmt.Fprintf(os.Stderr, "{\"error\":%q,\"message\":%q,\"code\":%d}\n", apiErr.ErrorType, apiErr.Message, apiErr.StatusCode)
+				fmt.Fprintf(w, "{\"error\":%q,\"message\":%q,\"code\":%d}\n", apiErr.ErrorType, apiErr.Message, apiErr.StatusCode)
 			}
 		} else {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", apiErr.Message)
+			fmt.Fprintf(w, "Error: %s\n", apiErr.Message)
+		}
+	case errors.As(err, &reconcileErr):
+		if outputFmt == "json" {
+			payload := struct {
+				Error          string `json:"error"`
+				Message        string `json:"message"`
+				Code           int    `json:"code"`
+				Method         string `json:"method"`
+				Path           string `json:"path"`
+				IdempotencyKey string `json:"idempotency_key"`
+			}{
+				Error:          "reconcile_required",
+				Message:        reconcileErr.Message,
+				Method:         reconcileErr.Method,
+				Path:           reconcileErr.Path,
+				IdempotencyKey: reconcileErr.IdempotencyKey,
+			}
+			_ = json.NewEncoder(w).Encode(payload)
+		} else {
+			fmt.Fprintf(w, "Error: %s (method=%s path=%s idempotency_key=%s)\n",
+				reconcileErr.Message, reconcileErr.Method, reconcileErr.Path, reconcileErr.IdempotencyKey)
 		}
 	case errors.As(err, &netErr):
 		if outputFmt == "json" {
-			fmt.Fprintf(os.Stderr, "{\"error\":\"network_error\",\"message\":%q,\"code\":0}\n", netErr.Message)
+			fmt.Fprintf(w, "{\"error\":\"network_error\",\"message\":%q,\"code\":0}\n", netErr.Message)
 		} else {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", netErr.Message)
+			fmt.Fprintf(w, "Error: %s\n", netErr.Message)
 		}
 	case errors.As(err, &cfgErr):
 		if outputFmt == "json" {
-			fmt.Fprintf(os.Stderr, "{\"error\":\"config_error\",\"message\":%q,\"code\":0}\n", cfgErr.Message)
+			fmt.Fprintf(w, "{\"error\":\"config_error\",\"message\":%q,\"code\":0}\n", cfgErr.Message)
 		} else {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", cfgErr.Message)
+			fmt.Fprintf(w, "Error: %s\n", cfgErr.Message)
 		}
 	default:
 		if outputFmt == "json" {
-			fmt.Fprintf(os.Stderr, "{\"error\":\"unknown\",\"message\":%q,\"code\":0}\n", err.Error())
+			fmt.Fprintf(w, "{\"error\":\"unknown\",\"message\":%q,\"code\":0}\n", err.Error())
 		} else {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+			fmt.Fprintf(w, "Error: %s\n", err.Error())
 		}
 	}
 }

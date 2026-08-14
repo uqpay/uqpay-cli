@@ -126,38 +126,38 @@ func (c *Client) IframeBase() string {
 
 // Get performs a GET request.
 func (c *Client) Get(ctx context.Context, path string, query map[string]string) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodGet, path, query, nil, nil, false, 0, false)
+	return c.do(ctx, http.MethodGet, path, query, nil, nil, false)
 }
 
 // GetH performs a GET request with extra headers.
 func (c *Client) GetH(ctx context.Context, path string, query map[string]string, headers map[string]string) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodGet, path, query, nil, headers, false, 0, false)
+	return c.do(ctx, http.MethodGet, path, query, nil, headers, false)
 }
 
 // GetHI performs a GET request with extra headers and an idempotency key.
 // Use for APIs that require x-idempotency-key on GET requests.
 func (c *Client) GetHI(ctx context.Context, path string, query map[string]string, headers map[string]string) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodGet, path, query, nil, headers, true, 0, false)
+	return c.do(ctx, http.MethodGet, path, query, nil, headers, true)
 }
 
 // Post performs a POST request with JSON body.
 func (c *Client) Post(ctx context.Context, path string, body map[string]any) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodPost, path, nil, body, nil, true, 0, false)
+	return c.do(ctx, http.MethodPost, path, nil, body, nil, true)
 }
 
 // PostH performs a POST request with JSON body and extra headers.
 func (c *Client) PostH(ctx context.Context, path string, body map[string]any, headers map[string]string) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodPost, path, nil, body, headers, true, 0, false)
+	return c.do(ctx, http.MethodPost, path, nil, body, headers, true)
 }
 
 // Delete performs a DELETE request with an optional JSON body.
 func (c *Client) Delete(ctx context.Context, path string, body map[string]any) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodDelete, path, nil, body, nil, true, 0, false)
+	return c.do(ctx, http.MethodDelete, path, nil, body, nil, true)
 }
 
 // DeleteH performs a DELETE request with an optional JSON body and extra headers.
 func (c *Client) DeleteH(ctx context.Context, path string, body map[string]any, headers map[string]string) ([]byte, error) {
-	return c.doAttempt(ctx, http.MethodDelete, path, nil, body, headers, true, 0, false)
+	return c.do(ctx, http.MethodDelete, path, nil, body, headers, true)
 }
 
 // PostMultipartH uploads a file via multipart/form-data POST.
@@ -207,12 +207,13 @@ func (c *Client) PostMultipartH(ctx context.Context, path string, filePath strin
 		return nil, err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	req.Header.Set("x-idempotency-key", uuid.New().String())
+	idempotencyKey := resolveIdempotencyKey(true, headers)
+	req.Header.Set("x-idempotency-key", idempotencyKey)
 	if c.cfg.ClientID != "" {
 		req.Header.Set("x-client-id", c.cfg.ClientID)
 	}
 	for k, v := range headers {
-		if v != "" {
+		if v != "" && !strings.EqualFold(k, "x-idempotency-key") {
 			req.Header.Set(k, v)
 		}
 	}
@@ -228,13 +229,17 @@ func (c *Client) PostMultipartH(ctx context.Context, path string, filePath strin
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		return nil, &apierr.NetworkError{Message: fmt.Sprintf("connection failed: %s", err)}
+		return nil, newReconcileRequiredError(
+			http.MethodPost, path, idempotencyKey, "connection failed before a response was received",
+		)
 	}
 	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, &apierr.NetworkError{Message: fmt.Sprintf("failed to read response: %s", err)}
+		return nil, newReconcileRequiredError(
+			http.MethodPost, path, idempotencyKey, "response could not be read completely",
+		)
 	}
 
 	if c.debug {
@@ -244,7 +249,27 @@ func (c *Client) PostMultipartH(ctx context.Context, path string, filePath strin
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		return respBody, nil
 	}
+	if resp.StatusCode >= 500 {
+		return nil, newReconcileRequiredError(
+			http.MethodPost,
+			path,
+			idempotencyKey,
+			fmt.Sprintf("server returned HTTP %d", resp.StatusCode),
+		)
+	}
 	return nil, parseAPIError(resp.StatusCode, respBody)
+}
+
+func (c *Client) do(
+	ctx context.Context,
+	method, path string,
+	query map[string]string,
+	body map[string]any,
+	extraHeaders map[string]string,
+	withIdempotency bool,
+) ([]byte, error) {
+	idempotencyKey := resolveIdempotencyKey(withIdempotency, extraHeaders)
+	return c.doAttempt(ctx, method, path, query, body, extraHeaders, idempotencyKey, 0, false)
 }
 
 func (c *Client) doAttempt(
@@ -253,7 +278,7 @@ func (c *Client) doAttempt(
 	query map[string]string,
 	body map[string]any,
 	extraHeaders map[string]string,
-	withIdempotency bool,
+	idempotencyKey string,
 	attempt int,
 	tokenRefreshed bool,
 ) ([]byte, error) {
@@ -289,11 +314,11 @@ func (c *Client) doAttempt(
 	if c.cfg.ClientID != "" {
 		req.Header.Set("x-client-id", c.cfg.ClientID)
 	}
-	if withIdempotency {
-		req.Header.Set("x-idempotency-key", uuid.New().String())
+	if idempotencyKey != "" {
+		req.Header.Set("x-idempotency-key", idempotencyKey)
 	}
 	for k, v := range extraHeaders {
-		if v != "" {
+		if v != "" && !strings.EqualFold(k, "x-idempotency-key") {
 			req.Header.Set(k, v)
 		}
 	}
@@ -310,9 +335,14 @@ func (c *Client) doAttempt(
 
 	resp, err := c.http.Do(req)
 	if err != nil {
+		if isMutatingMethod(method) {
+			return nil, newReconcileRequiredError(
+				method, path, idempotencyKey, "connection failed before a response was received",
+			)
+		}
 		if attempt < maxRetries-1 {
 			time.Sleep(retryDelay(c.retryDelayOverride, attempt, 0))
-			return c.doAttempt(ctx, method, path, query, body, extraHeaders, withIdempotency, attempt+1, tokenRefreshed)
+			return c.doAttempt(ctx, method, path, query, body, extraHeaders, idempotencyKey, attempt+1, tokenRefreshed)
 		}
 		return nil, &apierr.NetworkError{Message: fmt.Sprintf("connection failed: %s", err)}
 	}
@@ -320,6 +350,15 @@ func (c *Client) doAttempt(
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
+		if isMutatingMethod(method) {
+			return nil, newReconcileRequiredError(
+				method, path, idempotencyKey, "response could not be read completely",
+			)
+		}
+		if attempt < maxRetries-1 {
+			time.Sleep(retryDelay(c.retryDelayOverride, attempt, 0))
+			return c.doAttempt(ctx, method, path, query, body, extraHeaders, idempotencyKey, attempt+1, tokenRefreshed)
+		}
 		return nil, &apierr.NetworkError{Message: fmt.Sprintf("failed to read response: %s", err)}
 	}
 
@@ -347,18 +386,63 @@ func (c *Client) doAttempt(
 		}
 		if isTokenExpired(rawMsg) {
 			c.tokens.Invalidate(c.cfg.Env)
-			return c.doAttempt(ctx, method, path, query, body, extraHeaders, withIdempotency, attempt, true)
+			return c.doAttempt(ctx, method, path, query, body, extraHeaders, idempotencyKey, attempt, true)
 		}
+	}
+
+	// A mutating request may have completed before the server returned 5xx.
+	// Until an operation-level contract proves replay safety, require callers to
+	// reconcile instead of blindly submitting the write again.
+	if resp.StatusCode >= 500 && isMutatingMethod(method) {
+		return nil, newReconcileRequiredError(
+			method,
+			path,
+			idempotencyKey,
+			fmt.Sprintf("server returned HTTP %d", resp.StatusCode),
+		)
 	}
 
 	// Retry on 429 / 5xx
 	if shouldRetry(resp.StatusCode, attempt) {
 		delay := retryDelay(c.retryDelayOverride, attempt, parseRetryAfter(resp.Header.Get("Retry-After")))
 		time.Sleep(delay)
-		return c.doAttempt(ctx, method, path, query, body, extraHeaders, withIdempotency, attempt+1, tokenRefreshed)
+		return c.doAttempt(ctx, method, path, query, body, extraHeaders, idempotencyKey, attempt+1, tokenRefreshed)
 	}
 
 	return nil, apiErr
+}
+
+func resolveIdempotencyKey(withIdempotency bool, headers map[string]string) string {
+	if !withIdempotency {
+		return ""
+	}
+	if value := headers["x-idempotency-key"]; value != "" {
+		return value
+	}
+	for key, value := range headers {
+		if strings.EqualFold(key, "x-idempotency-key") && value != "" {
+			return value
+		}
+	}
+	return uuid.New().String()
+}
+
+func isMutatingMethod(method string) bool {
+	switch strings.ToUpper(method) {
+	case http.MethodGet, http.MethodHead, http.MethodOptions:
+		return false
+	default:
+		return true
+	}
+}
+
+func newReconcileRequiredError(method, path, idempotencyKey, reason string) error {
+	return &apierr.ReconcileRequiredError{
+		Message:        fmt.Sprintf("request outcome is unknown (%s); reconcile remote state before retrying", reason),
+		Method:         method,
+		Path:           path,
+		IdempotencyKey: idempotencyKey,
+	}
 }
 
 func printDebugRequest(w io.Writer, method, u string, headers http.Header, body map[string]any) {

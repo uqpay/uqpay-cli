@@ -24,6 +24,20 @@ func (e *NetworkError) Error() string {
 	return e.Message
 }
 
+// ReconcileRequiredError means a mutating request may have reached the API, but
+// the CLI could not determine its outcome. Callers must reconcile remote state
+// before deciding whether to submit another logical request.
+type ReconcileRequiredError struct {
+	Message        string
+	Method         string
+	Path           string
+	IdempotencyKey string
+}
+
+func (e *ReconcileRequiredError) Error() string {
+	return e.Message
+}
+
 // ConfigError represents a missing or invalid local configuration.
 type ConfigError struct {
 	Message string
