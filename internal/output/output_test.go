@@ -160,6 +160,8 @@ func printAndDecodeJSON(t *testing.T, fixture string) map[string]any {
 func TestVirtualAccountApplicationCreateOutputPreservesSkippedResult(t *testing.T) {
 	got := printAndDecodeJSON(t, `{
 		"data": {
+			"account_id": "account-create",
+			"direct_id": "0",
 			"application_id": "app-create",
 			"public_version": 1,
 			"country": "SG",
@@ -185,11 +187,8 @@ func TestVirtualAccountApplicationCreateOutputPreservesSkippedResult(t *testing.
 		}
 	}`)
 	data := got["data"].(map[string]any)
-	if _, exists := data["account_id"]; exists {
-		t.Fatalf("Gateway Create output unexpectedly contains webhook-only account_id: %#v", data)
-	}
-	if _, exists := data["direct_id"]; exists {
-		t.Fatalf("Gateway Create output unexpectedly contains webhook-only direct_id: %#v", data)
+	if data["account_id"] != "account-create" || data["direct_id"] != "0" {
+		t.Fatalf("Gateway Create routing fields were not preserved: %#v", data)
 	}
 	results := data["results"].([]any)
 	skipped := results[0].(map[string]any)
@@ -208,6 +207,8 @@ func TestVirtualAccountApplicationCreateOutputPreservesSkippedResult(t *testing.
 func TestVirtualAccountApplicationRetrieveOutputPreservesFailureAndBankDetails(t *testing.T) {
 	got := printAndDecodeJSON(t, `{
 		"data": {
+			"account_id": "account-connected",
+			"direct_id": "account-main",
 			"application_id": "app-detail",
 			"public_version": 4,
 			"country": "BH",
@@ -244,11 +245,8 @@ func TestVirtualAccountApplicationRetrieveOutputPreservesFailureAndBankDetails(t
 		}
 	}`)
 	data := got["data"].(map[string]any)
-	if _, exists := data["account_id"]; exists {
-		t.Fatalf("Gateway Retrieve output unexpectedly contains webhook-only account_id: %#v", data)
-	}
-	if _, exists := data["direct_id"]; exists {
-		t.Fatalf("Gateway Retrieve output unexpectedly contains webhook-only direct_id: %#v", data)
+	if data["account_id"] != "account-connected" || data["direct_id"] != "account-main" {
+		t.Fatalf("Gateway Retrieve routing fields were not preserved: %#v", data)
 	}
 	results := data["results"].([]any)
 	failedError := results[0].(map[string]any)["error"].(map[string]any)
@@ -272,6 +270,8 @@ func TestVirtualAccountApplicationListOutputPreservesEnvelopeAndSummary(t *testi
 		"total_pages": 3,
 		"total_items": 101,
 		"data": [{
+			"account_id": "account-summary",
+			"direct_id": "0",
 			"application_id": "app-summary",
 			"public_version": 2,
 			"country": "SG",
@@ -284,11 +284,8 @@ func TestVirtualAccountApplicationListOutputPreservesEnvelopeAndSummary(t *testi
 		t.Fatalf("pagination envelope lost: %#v", got)
 	}
 	summary := got["data"].([]any)[0].(map[string]any)
-	if _, exists := summary["account_id"]; exists {
-		t.Fatalf("Gateway List summary unexpectedly contains webhook-only account_id: %#v", summary)
-	}
-	if _, exists := summary["direct_id"]; exists {
-		t.Fatalf("Gateway List summary unexpectedly contains webhook-only direct_id: %#v", summary)
+	if summary["account_id"] != "account-summary" || summary["direct_id"] != "0" {
+		t.Fatalf("Gateway List routing fields were not preserved: %#v", summary)
 	}
 	for key, want := range map[string]any{
 		"application_id": "app-summary",

@@ -32,9 +32,10 @@ automation must migrate before adopting this version.
 
 ### Documentation
 
-- Clarified that the CLI has no webhook parser and does not add webhook-only
-  `account_id` or `direct_id` fields to Gateway Virtual Account application API
-  output. JSON output continues to preserve the response structure as received.
+- Clarified that the CLI has no webhook parser and that JSON output preserves
+  Gateway `account_id` and `direct_id` fields when returned. Raw preservation
+  does not assign those fields a public REST contract while Developer Docs are
+  pending.
 
 ### Breaking
 

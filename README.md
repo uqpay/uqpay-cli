@@ -98,9 +98,10 @@ Reuse an idempotency key only for the same normalized Create request. Create
 returns HTTP 200 application data; usable bank details arrive asynchronously.
 
 The CLI does not parse or type webhook deliveries. Use a customer webhook
-handler or an SDK verifier for that flow. The webhook-only routing fields
-`account_id` and `direct_id` are not added to CLI Create, List, or Retrieve API
-output; `-o json` preserves the Gateway response structure as received.
+handler or an SDK verifier for that flow. `-o json` preserves Gateway Create,
+List, and Retrieve responses as received, including `account_id` and `direct_id`
+when the server returns them. Raw preservation does not assign those fields a
+public REST contract while the Developer Docs contract remains pending.
 
 Or inline without config file:
 
