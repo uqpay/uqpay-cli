@@ -32,10 +32,11 @@ automation must migrate before adopting this version.
 
 ### Documentation
 
-- Clarified that the CLI has no webhook parser and that JSON output preserves
-  Gateway `account_id` and `direct_id` fields when returned. Raw preservation
-  does not assign those fields a public REST contract while Developer Docs are
-  pending.
+- Documented required Gateway `account_id` and `direct_id` fields on successful
+  Virtual Account Create/Retrieve data and List summaries. The CLI preserves
+  both fields without validation or transformation; `direct_id` remains an
+  ordinary string and is `"0"` for main accounts.
+- Clarified that the CLI has no webhook parser.
 
 ### Breaking
 

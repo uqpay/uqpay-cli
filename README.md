@@ -97,11 +97,14 @@ For connected accounts, add `--on-behalf-of <account-id>` to all three flows.
 Reuse an idempotency key only for the same normalized Create request. Create
 returns HTTP 200 application data; usable bank details arrive asynchronously.
 
+Successful Gateway Create and Retrieve application data and each List summary
+include required `account_id` and `direct_id` fields. `account_id` is the UUID of
+the account that owns the application. `direct_id` is an ordinary string: `"0"`
+for a main account and the main account ID for a connected account. The CLI does
+not validate or transform either field; `-o json` preserves them as received.
+
 The CLI does not parse or type webhook deliveries. Use a customer webhook
-handler or an SDK verifier for that flow. `-o json` preserves Gateway Create,
-List, and Retrieve responses as received, including `account_id` and `direct_id`
-when the server returns them. Raw preservation does not assign those fields a
-public REST contract while the Developer Docs contract remains pending.
+handler or an SDK verifier for that flow.
 
 Or inline without config file:
 
