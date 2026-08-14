@@ -7,14 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Add `uqpay operation-manifest` as a versioned machine-readable inventory of
-  all 100 canonical API operations, including stable and OpenAPI operation IDs,
-  HTTP contracts, risk classification, parameter/body metadata,
-  connected-account and idempotency capabilities, and Developer Docs links.
-  Its JSON Schema is available through `uqpay operation-manifest --schema`.
-
 ### Fixed
 
 - Reuse one `x-idempotency-key` for every 401 token refresh and HTTP 429 retry
