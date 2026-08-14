@@ -10,7 +10,7 @@ func TestVirtualAccountCreateDocumentsApplicationContract(t *testing.T) {
 	help := cmd.Long
 	for _, required := range []string{
 		"country", "One ISO 4217 currency", "--idempotency-key", "LOCAL | SWIFT",
-		"nickname", "-d country=SG", "-d currency=USD",
+		"nickname", "-d country=SG", "-d currency=USD", "account_id", "direct_id", `"0" for main`,
 	} {
 		if !strings.Contains(help, required) {
 			t.Errorf("create help missing %q", required)
@@ -38,6 +38,17 @@ func TestVirtualAccountApplicationCommandsRemainSeparateFromIssuedList(t *testin
 		}
 	}
 	list, _, _ := application.Find([]string{"list"})
+	for _, outputField := range []string{"account_id", "direct_id"} {
+		if !strings.Contains(list.Long, outputField) {
+			t.Errorf("application list help missing required output field %q", outputField)
+		}
+	}
+	retrieve, _, _ := application.Find([]string{"retrieve"})
+	for _, outputField := range []string{"account_id", "direct_id", `"0" for`} {
+		if !strings.Contains(retrieve.Long, outputField) {
+			t.Errorf("application retrieve help missing output contract %q", outputField)
+		}
+	}
 	for _, flag := range []string{"page-num", "page-size", "status", "country", "currency", "on-behalf-of"} {
 		if list.Flags().Lookup(flag) == nil {
 			t.Errorf("application list missing --%s", flag)

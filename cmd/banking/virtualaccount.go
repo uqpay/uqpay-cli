@@ -83,6 +83,10 @@ Parameters:
     nickname         string   Application label (maximum 255 characters)
     --on-behalf-of            Sub-account ID sent as x-on-behalf-of
 
+Success output:
+  account_id       Owning application account UUID
+  direct_id        "0" for main; main account ID for connected account
+
 Examples:
   uqpay banking virtual-account create --idempotency-key va-001 -d country=SG -d currency=USD
   uqpay banking virtual-account create --idempotency-key va-002 -d country=BH -d currency=GBP -d payment_method=SWIFT -d nickname=Collections`,
@@ -143,7 +147,8 @@ func newVirtualAccountApplicationListCmd() *cobra.Command {
 
 This is not the issued Virtual Account list. Page number and page size are sent
 on every request. Optional status, country, and currency filters are combined.
-Status: SUBMITTED | PARTIALLY_COMPLETED | COMPLETED | FAILED | CLOSED.`,
+Status: SUBMITTED | PARTIALLY_COMPLETED | COMPLETED | FAILED | CLOSED.
+Each summary includes required account_id and direct_id routing fields.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
 			if err != nil {
@@ -180,7 +185,11 @@ func newVirtualAccountApplicationRetrieveCmd() *cobra.Command {
 		Use:     "retrieve <application-id>",
 		Aliases: []string{"get"},
 		Short:   "Retrieve the complete current application",
-		Args:    cobra.ExactArgs(1),
+		Long: `Retrieve the complete current application.
+
+Success data includes required account_id and direct_id. direct_id is "0" for
+a main account and the main account ID for a connected account.`,
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
 			if err != nil {
