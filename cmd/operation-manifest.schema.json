@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:uqpay:cli:operation-manifest:v1",
+  "title": "UQPAY CLI operation manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "operations"],
+  "properties": {
+    "schema": { "const": "uqpay.operation-manifest.v1" },
+    "operations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/operation" }
+    }
+  },
+  "$defs": {
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id", "api_operation_id", "command", "domain", "resource", "action",
+        "http_method", "http_path", "risk", "parameters", "body",
+        "supports_on_behalf_of", "idempotency", "documentation_url"
+      ],
+      "properties": {
+        "operation_id": { "type": "string", "minLength": 1 },
+        "api_operation_id": { "type": "string", "minLength": 1 },
+        "command": { "type": "array", "minItems": 2, "items": { "type": "string", "minLength": 1 } },
+        "domain": { "type": "string", "enum": ["connect", "supporting", "issuing", "banking", "payment"] },
+        "resource": { "type": "string", "minLength": 1 },
+        "action": { "type": "string", "minLength": 1 },
+        "http_method": { "type": "string", "enum": ["GET", "POST", "DELETE"] },
+        "http_path": { "type": "string", "pattern": "^/v[0-9]+/" },
+        "risk": { "type": "string", "enum": ["read", "write", "destructive"] },
+        "parameters": { "type": "array", "items": { "$ref": "#/$defs/parameter" } },
+        "body": { "$ref": "#/$defs/body" },
+        "supports_on_behalf_of": { "type": "boolean" },
+        "idempotency": { "$ref": "#/$defs/idempotency" },
+        "documentation_url": { "type": "string", "format": "uri", "pattern": "^https://developers\\.uqpay\\.com/" }
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "location", "type", "required"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "enum": ["argument", "option", "header"] },
+        "type": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "repeatable": { "type": "boolean" },
+        "default": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supported", "fields", "additional_properties"],
+      "properties": {
+        "supported": { "type": "boolean" },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/bodyField" } },
+        "additional_properties": { "type": "boolean" }
+      }
+    },
+    "bodyField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "required"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["string", "number", "integer", "boolean", "object", "array"] },
+        "required": { "type": "boolean" }
+      }
+    },
+    "idempotency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "mode"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "mode": { "type": "string", "enum": ["none", "auto_generated", "caller_required"] }
+      }
+    }
+  }
+}

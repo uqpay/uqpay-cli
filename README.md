@@ -149,6 +149,24 @@ Located in [`skills/`](./skills/), these provide structured guides for AI Agents
 | [`uqpay-connect`](./skills/uqpay-connect/SKILL.md) | Connected accounts, sub-account onboarding, `--on-behalf-of` operations |
 | [`uqpay-simulate`](./skills/uqpay-simulate/SKILL.md) | Sandbox testing: deposits, authorizations, reversals |
 
+### Machine-readable operation contract
+
+Agents and test harnesses can inspect the complete public API command surface
+without scraping help text:
+
+```bash
+uqpay operation-manifest                 # uqpay.operation-manifest.v1 JSON
+uqpay operation-manifest --schema        # the matching JSON Schema
+```
+
+Each of the 100 canonical operations includes a globally unique, stable
+`operation_id`, its OpenAPI `api_operation_id`, command path,
+domain/resource/action, HTTP method and path, read/write/destructive risk,
+parameter and request-body metadata, connected-account support, idempotency
+requirements, and its Developer Docs URL. Top-level shortcut commands are
+intentionally excluded so an operation appears exactly once. Credentials and
+local presentation flags are never included.
+
 ## Command Structure
 
 ```
