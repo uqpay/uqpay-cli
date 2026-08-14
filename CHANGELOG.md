@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `uqpay operation-manifest` as a versioned machine-readable inventory of
+  all 100 canonical API operations, including stable and OpenAPI operation IDs,
+  HTTP contracts, risk classification, parameter/body metadata,
+  connected-account and idempotency capabilities, and Developer Docs links.
+  Its JSON Schema is available through `uqpay operation-manifest --schema`.
+
+### Fixed
+
+- Reuse one `x-idempotency-key` for every 401 token refresh and HTTP 429 retry
+  belonging to the same logical request. Previously, commands relying on an
+  automatically generated key could generate a new key per retry.
+- Stop automatically replaying mutating requests after ambiguous connection or
+  response-read failures, or HTTP 5xx responses. The CLI now returns structured
+  `reconcile_required` output with the method, path, and original idempotency key
+  so callers can inspect remote state before retrying.
+
 ## [2.0.0]
 
 This major release replaces the previous Virtual Account Create output and

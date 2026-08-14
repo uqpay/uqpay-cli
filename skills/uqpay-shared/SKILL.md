@@ -85,6 +85,8 @@ uqpay <domain> <resource> <action> [flags]
 - `config` — CLI configuration
 - `file` — file upload and download links
 - `simulate` — sandbox-only testing (deposit, authorization, reversal)
+- `operation-manifest` — versioned JSON inventory of canonical API operations;
+  use `--schema` to emit its JSON Schema
 
 **Shortcuts** (top-level aliases for common resources):
 - `beneficiary` → `banking beneficiary`
