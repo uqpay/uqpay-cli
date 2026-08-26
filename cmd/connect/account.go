@@ -345,6 +345,9 @@ Parameters (COMPANY entity):
     ownership_details.representatives[0].first_name_english   string   Representative first name
     ownership_details.shareholder_docs[]             string   Shareholder document (base64 string, @+filepath, or file ID)
 
+  Optional (when inherit=-1):
+    ownership_details.representatives[0].date_of_birth        string   Representative date of birth (YYYY-MM-DD)
+
 Examples:
   uqpay account create-sub \
     -d entity_type=INDIVIDUAL \

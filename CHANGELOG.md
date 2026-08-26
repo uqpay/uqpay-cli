@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0]
+
+### Changed
+
+- Account Center Create SubAccount help now documents
+  `ownership_details.representatives[].date_of_birth` as optional for COMPANY
+  requests and still documents `individual_info.date_of_birth` as required for
+  INDIVIDUAL requests. Supplied dates remain `YYYY-MM-DD`.
+
 ## [2.0.1]
 
 ### Fixed
