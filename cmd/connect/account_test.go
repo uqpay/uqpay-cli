@@ -85,3 +85,32 @@ func TestCreateSubHelpExampleIncludesNewRequiredFields(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateSubHelpDocumentsRepresentativeDOBOnlyAsCompanyOptional(t *testing.T) {
+	const companyStart = "Parameters (COMPANY entity):"
+	companyIndex := strings.Index(accountCreateSubHelp, companyStart)
+	if companyIndex < 0 {
+		t.Fatalf("help text missing %q section", companyStart)
+	}
+	company := accountCreateSubHelp[companyIndex+len(companyStart):]
+
+	const optionalStart = "Optional (when inherit=-1):"
+	optionalIndex := strings.Index(company, optionalStart)
+	if optionalIndex < 0 {
+		t.Fatalf("COMPANY help missing %q section", optionalStart)
+	}
+	required := company[:optionalIndex]
+	optional := company[optionalIndex:]
+	const representativeDOB = "ownership_details.representatives[0].date_of_birth"
+	if strings.Contains(required, representativeDOB) {
+		t.Fatalf("%q must not be documented as required for COMPANY", representativeDOB)
+	}
+	if !strings.Contains(optional, representativeDOB) || !strings.Contains(optional, "YYYY-MM-DD") {
+		t.Fatalf("%q must be documented as an optional YYYY-MM-DD field for COMPANY", representativeDOB)
+	}
+
+	individual := individualRequiredSection(t)
+	if !strings.Contains(individual, "individual_info.date_of_birth") {
+		t.Fatal("individual_info.date_of_birth must remain in the INDIVIDUAL Required block")
+	}
+}
