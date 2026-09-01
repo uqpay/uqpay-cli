@@ -341,12 +341,37 @@ Parameters (COMPANY entity):
     company_info.certification_of_incorporation[]   string   Incorporation certificate (base64 string, @+filepath, or file ID, repeatable)
     company_address.street_address                   string   Street address
     company_address.city                             string   City
+    company_address.state                            string   State or province
     company_address.postal_code                      string   Postal code
-    ownership_details.representatives[0].first_name_english   string   Representative first name
-    ownership_details.shareholder_docs[]             string   Shareholder document (base64 string, @+filepath, or file ID)
-
-  Optional (when inherit=-1):
+    ownership_details.representatives[0].legal_first_name_english   string   Representative first name in English
+    ownership_details.representatives[0].legal_last_name_english    string   Representative last name in English
+    ownership_details.representatives[0].email_address        string   Representative email address
+    ownership_details.representatives[0].is_applicant         string   1 for the applicant, 0 otherwise
+    ownership_details.representatives[0].job_title            string   DIRECTOR | BENEFICIAL_OWNER | BENEFICIAL_OWNER_AND_DIRECTOR | AUTHORISED_PERSON
+    ownership_details.representatives[0].ownership_percentage string   Ownership percentage; use "0" when there is no ownership
+    ownership_details.representatives[0].nationality          string   ISO 3166-1 alpha-2 country code
     ownership_details.representatives[0].date_of_birth        string   Representative date of birth (YYYY-MM-DD)
+    ownership_details.representatives[0].country_or_territory string   ISO 3166-1 alpha-2 country of residence
+    ownership_details.representatives[0].street_address       string   Residential street address
+    ownership_details.representatives[0].city                 string   Residential city
+    ownership_details.representatives[0].state                string   Residential state or province
+    ownership_details.representatives[0].postal_code          string   Residential postal code
+    ownership_details.representatives[0].identification_type  string   PASSPORT | DRIVERS_LICENSE | NATIONAL_ID
+    ownership_details.representatives[0].identification_value string   Identification document number
+    ownership_details.representatives[0].identity_docs[]      string   Identification document (base64 string, @+filepath, or file ID, repeatable)
+    ownership_details.shareholder_docs[]             string   Shareholder document (base64 string, @+filepath, or file ID)
+    business_details.country_or_territory            string   ISO 3166-1 alpha-2 operating country code
+    business_details.street_address                  string   Operating street address
+    business_details.city                            string   Operating city
+    business_details.state                           string   Operating state or province
+    business_details.postal_code                     string   Operating postal code
+    business_details.industry                        string   Industry code
+    business_details.turnover_monthly                string   TM001 | TM002 | TM003 | TM004 | TM005
+    business_details.number_of_employee              string   BS001 | BS002 | BS003 | BS004 | BS005
+    business_details.account_purpose[]               string   PAYMENT_COLLECTION | PAYOUT_DISBURSEMENT | MULTI_CURRENCY_BANKING | CARD_ISSUING | CRYPTO_RAMP | GLOBAL_TRANSFER | TREASURY_FX | OTHERS (repeatable)
+    business_details.banking_currencies[]            string   ISO 4217 alpha-3 currency codes (repeatable)
+    business_details.banking_countries[]             string   ISO 3166-1 alpha-2 country codes (repeatable)
+    business_details.articles_of_association[]       string   Articles of association (base64 string, @+filepath, or file ID, repeatable)
 
 Examples:
   uqpay account create-sub \
@@ -397,12 +422,11 @@ func newAccountCreateSubCmd() *cobra.Command {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
 			}
-			body, err := dotparam.Parse(data)
+			body, err := parseCreateSubData(data)
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
 			}
-			dotparam.CoerceNumbers(body, "inherit", "internationally", "tos_agreement", "ownership_percentage")
 			c := client.New(cfg)
 			resp, err := c.Post(context.Background(), "/v1/accounts/create_accounts", body)
 			if err != nil {
@@ -414,4 +438,13 @@ func newAccountCreateSubCmd() *cobra.Command {
 	}
 	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "Key=value pairs (repeatable), supports dot notation for nested fields")
 	return cmd
+}
+
+func parseCreateSubData(data []string) (map[string]any, error) {
+	body, err := dotparam.Parse(data)
+	if err != nil {
+		return nil, err
+	}
+	dotparam.CoerceNumbers(body, "inherit", "internationally", "tos_agreement")
+	return body, nil
 }

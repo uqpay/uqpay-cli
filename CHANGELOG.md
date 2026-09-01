@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0]
+
+This major release aligns Account Center Create SubAccount COMPANY requests
+with the contract that takes effect in Production on 2026-09-17.
+
+### Breaking
+
+- For `entity_type=COMPANY` with `inherit=-1`, representatives now require
+  `email_address`, `date_of_birth`, and string-valued `ownership_percentage`;
+  pass `"0"` when a representative has no ownership.
+- Non-inherited COMPANY requests now require
+  `business_details.account_purpose`, `banking_currencies`,
+  `banking_countries`, and `articles_of_association`.
+- COMPANY `account_purpose` accepts only `PAYMENT_COLLECTION`,
+  `PAYOUT_DISBURSEMENT`, `MULTI_CURRENCY_BANKING`, `CARD_ISSUING`,
+  `CRYPTO_RAMP`, `GLOBAL_TRANSFER`, `TREASURY_FX`, and `OTHERS`. The API rejects
+  removed values after the cutover.
+- `account create-sub` now preserves `ownership_percentage` as a JSON string
+  instead of coercing numeric-looking input to a JSON number.
+
+The CLI continues to pass `-d` fields through as a generic JSON object; use
+`uqpay account create-sub -h` and the
+[Account Center Changelog](https://developers.uqpay.com/changelog) for the
+current request contract.
+
+### Migration
+
+- Install with `npm install --global @uqpay/cli@3.0.0`, update affected COMPANY
+  payloads, and validate them in Sandbox before the Production cutover.
+
 ## [2.1.0]
 
 ### Changed

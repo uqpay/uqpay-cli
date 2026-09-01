@@ -124,6 +124,7 @@ uqpay account create-sub \
   -d "ownership_details.representatives[0].email_address=jane@example.com" \
   -d "ownership_details.representatives[0].is_applicant=1" \
   -d "ownership_details.representatives[0].job_title=DIRECTOR" \
+  -d "ownership_details.representatives[0].ownership_percentage=0" \
   -d "ownership_details.representatives[0].nationality=SG" \
   -d "ownership_details.representatives[0].phone_number=+6591234567" \
   -d "ownership_details.representatives[0].date_of_birth=1985-03-20" \
@@ -144,6 +145,10 @@ uqpay account create-sub \
   -d business_details.industry=7372 \
   -d business_details.turnover_monthly=TM001 \
   -d business_details.number_of_employee=BS001 \
+  -d "business_details.account_purpose[0]=PAYMENT_COLLECTION" \
+  -d "business_details.banking_currencies[0]=SGD" \
+  -d "business_details.banking_countries[0]=SG" \
+  -d "business_details.articles_of_association[0]=file-id" \
   -d tos_acceptance.ip=192.168.1.1 \
   -d tos_acceptance.date=2026-04-08T00:00:00Z \
   -d tos_acceptance.user_agent=uqpay-cli \
