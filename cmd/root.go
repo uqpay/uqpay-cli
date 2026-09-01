@@ -76,6 +76,8 @@ func NewRootCmd() *cobra.Command {
 	upgradeCmd.GroupID = "other"
 	root.AddCommand(upgradeCmd)
 
+	root.AddCommand(newCommandManifestCmd(root))
+
 	// Hide cobra's built-in completion command (users should use setup-completion instead)
 	root.CompletionOptions.HiddenDefaultCmd = true
 
