@@ -136,12 +136,13 @@ The CLI auto-coerces values:
 
 ### Automatic Number Coercion
 
-The CLI automatically converts known number-type fields to JSON numbers. Known fields include: `amount`, `transaction_amount`, `card_limit`, `no_pin_payment_amount`, `payout_amount`, `amount_to_capture`, `inherit`, `internationally`, `tos_agreement`, `ownership_percentage`. Just type the value normally:
+The CLI automatically converts known number-type fields to JSON numbers. Known fields include: `amount`, `transaction_amount`, `card_limit`, `no_pin_payment_amount`, `payout_amount`, `amount_to_capture`, `inherit`, `internationally`, and `tos_agreement`. Just type the value normally:
 
 ```bash
 -d amount=100                        # 100 (number, auto-converted)
 -d inherit=-1                        # -1 (number, auto-converted)
 -d tos_agreement=1                   # 1 (number, auto-converted)
+-d ownership_percentage=0            # "0" (string)
 -d postal_code=10001                 # "10001" (string, not a known number field)
 -d merchant_category_code=5734       # "5734" (string)
 ```

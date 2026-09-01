@@ -12,7 +12,8 @@ import (
 //   - 2026-03-19: employment_status, industry, job_title, company_name
 //   - 2026-07-02: gender, annual_income
 // and that state is documented as unconditionally required (per the spec's
-// IndividualInfo.required list), not GB/US-only.
+// IndividualInfo.required list), not GB/US-only. COMPANY checks below cover
+// the v3 non-inherited onboarding contract.
 
 // individualRequiredSection returns the "Required:" block of the INDIVIDUAL
 // entity section in the create-sub help, i.e. everything between the
@@ -86,7 +87,8 @@ func TestCreateSubHelpExampleIncludesNewRequiredFields(t *testing.T) {
 	}
 }
 
-func TestCreateSubHelpDocumentsRepresentativeDOBOnlyAsCompanyOptional(t *testing.T) {
+func companyNonInheritedRequiredSection(t *testing.T) string {
+	t.Helper()
 	const companyStart = "Parameters (COMPANY entity):"
 	companyIndex := strings.Index(accountCreateSubHelp, companyStart)
 	if companyIndex < 0 {
@@ -94,23 +96,128 @@ func TestCreateSubHelpDocumentsRepresentativeDOBOnlyAsCompanyOptional(t *testing
 	}
 	company := accountCreateSubHelp[companyIndex+len(companyStart):]
 
-	const optionalStart = "Optional (when inherit=-1):"
-	optionalIndex := strings.Index(company, optionalStart)
-	if optionalIndex < 0 {
-		t.Fatalf("COMPANY help missing %q section", optionalStart)
+	const requiredStart = "Required (when inherit=-1):"
+	requiredIndex := strings.Index(company, requiredStart)
+	if requiredIndex < 0 {
+		t.Fatalf("COMPANY help missing %q section", requiredStart)
 	}
-	required := company[:optionalIndex]
-	optional := company[optionalIndex:]
-	const representativeDOB = "ownership_details.representatives[0].date_of_birth"
-	if strings.Contains(required, representativeDOB) {
-		t.Fatalf("%q must not be documented as required for COMPANY", representativeDOB)
+	rest := company[requiredIndex+len(requiredStart):]
+	end := len(rest)
+	for _, marker := range []string{"\n  Optional", "\nExamples:"} {
+		if i := strings.Index(rest, marker); i >= 0 && i < end {
+			end = i
+		}
 	}
-	if !strings.Contains(optional, representativeDOB) || !strings.Contains(optional, "YYYY-MM-DD") {
-		t.Fatalf("%q must be documented as an optional YYYY-MM-DD field for COMPANY", representativeDOB)
+	return rest[:end]
+}
+
+func TestCreateSubHelpDocumentsCompanyV3RequiredFields(t *testing.T) {
+	required := companyNonInheritedRequiredSection(t)
+	expected := []string{
+		"company_info.legal_business_name",
+		"company_info.legal_business_name_english",
+		"company_info.country_of_incorporation",
+		"company_info.company_type",
+		"company_info.phone_number",
+		"company_info.email_address",
+		"company_info.company_registration_number",
+		"company_info.incorparate_date",
+		"company_info.certification_of_incorporation[]",
+		"company_address.street_address",
+		"company_address.city",
+		"company_address.state",
+		"company_address.postal_code",
+		"ownership_details.representatives[0].legal_first_name_english",
+		"ownership_details.representatives[0].legal_last_name_english",
+		"ownership_details.representatives[0].email_address",
+		"ownership_details.representatives[0].is_applicant",
+		"ownership_details.representatives[0].job_title",
+		"ownership_details.representatives[0].ownership_percentage",
+		"ownership_details.representatives[0].nationality",
+		"ownership_details.representatives[0].date_of_birth",
+		"ownership_details.representatives[0].country_or_territory",
+		"ownership_details.representatives[0].street_address",
+		"ownership_details.representatives[0].city",
+		"ownership_details.representatives[0].state",
+		"ownership_details.representatives[0].postal_code",
+		"ownership_details.representatives[0].identification_type",
+		"ownership_details.representatives[0].identification_value",
+		"ownership_details.representatives[0].identity_docs[]",
+		"ownership_details.shareholder_docs[]",
+		"business_details.country_or_territory",
+		"business_details.street_address",
+		"business_details.city",
+		"business_details.state",
+		"business_details.postal_code",
+		"business_details.industry",
+		"business_details.turnover_monthly",
+		"business_details.number_of_employee",
+		"business_details.account_purpose[]",
+		"business_details.banking_currencies[]",
+		"business_details.banking_countries[]",
+		"business_details.articles_of_association[]",
 	}
 
-	individual := individualRequiredSection(t)
-	if !strings.Contains(individual, "individual_info.date_of_birth") {
-		t.Fatal("individual_info.date_of_birth must remain in the INDIVIDUAL Required block")
+	actual := make(map[string]bool)
+	for _, line := range strings.Split(required, "\n") {
+		columns := strings.Fields(line)
+		if len(columns) > 0 {
+			actual[columns[0]] = true
+		}
+	}
+	expectedSet := make(map[string]bool, len(expected))
+	for _, field := range expected {
+		expectedSet[field] = true
+		if !actual[field] {
+			t.Errorf("create-sub help COMPANY required block is missing %q", field)
+		}
+	}
+	for field := range actual {
+		if !expectedSet[field] {
+			t.Errorf("create-sub help COMPANY required block contains unexpected field %q", field)
+		}
+	}
+}
+
+func TestCreateSubHelpDocumentsCompanyV3PurposeEnum(t *testing.T) {
+	required := companyNonInheritedRequiredSection(t)
+	for _, purpose := range []string{
+		"PAYMENT_COLLECTION",
+		"PAYOUT_DISBURSEMENT",
+		"MULTI_CURRENCY_BANKING",
+		"CARD_ISSUING",
+		"CRYPTO_RAMP",
+		"GLOBAL_TRANSFER",
+		"TREASURY_FX",
+		"OTHERS",
+	} {
+		if !strings.Contains(required, purpose) {
+			t.Errorf("create-sub help COMPANY purpose enum is missing %q", purpose)
+		}
+	}
+	for _, removed := range []string{"BUSINESS_PAYMENT", "BILL_PAYMENT", "INVESTMENT"} {
+		if strings.Contains(required, removed) {
+			t.Errorf("create-sub help COMPANY purpose enum still contains removed value %q", removed)
+		}
+	}
+}
+
+func TestParseCreateSubDataPreservesOwnershipPercentageString(t *testing.T) {
+	body, err := parseCreateSubData([]string{
+		"entity_type=COMPANY",
+		"inherit=-1",
+		"ownership_details.representatives[0].ownership_percentage=0",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got := body["inherit"]; got != int64(-1) {
+		t.Fatalf("inherit = %T(%v), want int64(-1)", got, got)
+	}
+	representatives := body["ownership_details"].(map[string]any)["representatives"].([]any)
+	got := representatives[0].(map[string]any)["ownership_percentage"]
+	if got != "0" {
+		t.Fatalf("ownership_percentage = %T(%v), want string %q", got, got, "0")
 	}
 }

@@ -36,7 +36,8 @@ Platform (Master Account)
 - Account creation payloads are the most complex in the API — use the [onboarding reference](references/uqpay-connect-onboarding.md)
 - `@+filepath` (data URI format) required for document fields
 - No special prefix needed for most fields — phone numbers, postal codes, registration numbers are strings by default
-- **Auto number coercion:** `tos_agreement` is auto-converted for both `account create` and `create-sub`. Additionally, `create-sub` auto-converts `inherit`, `internationally`, `ownership_percentage`
+- **Auto number coercion:** `tos_agreement` is auto-converted for both `account create` and `create-sub`. Additionally, `create-sub` auto-converts `inherit` and `internationally`. `ownership_percentage` remains a string; use `"0"` when a representative has no ownership.
+- For COMPANY `create-sub` requests that do not inherit onboarding details, provide each representative's `email_address`, `date_of_birth`, and string `ownership_percentage`, plus `business_details.account_purpose`, `banking_currencies`, `banking_countries`, and `articles_of_association`. Run `uqpay account create-sub -h` for the supported COMPANY purpose values.
 - After account creation, status is `PROCESSING` — verification happens asynchronously
 - Once verified, use `--on-behalf-of` to operate as the connected account across all domains
 - **Run `uqpay account <action> -h`** for complete parameter lists. The `-h` output is the source of truth.
