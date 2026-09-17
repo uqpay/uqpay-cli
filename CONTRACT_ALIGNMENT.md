@@ -53,3 +53,9 @@ Offline route-specific checks cover D189–D196: balance list/detail, bank accou
 ## Banking balance precision
 
 Offline D122–D129 fixtures cover `available_balance`, `frozen_balance`, `margin_balance` and `prepaid_balance` through both list and detail reads. Each field receives zero with trailing decimal places, a positive amount, a negative amount, large positive/negative amounts, and a long decimal string. Distinct values across fields detect accidental swaps; comparisons retain strings and precision. Long decimal fixtures test client robustness, not server-supported currency precision. CLI verification covers JSON output.
+
+## Acquiring nullable responses
+
+Offline fixtures distinguish missing fields, explicit null, empty strings/objects and populated controls. REST checks cover payment attempts, refunds and payouts. Empty REST event times remain strings. Webhook fixtures exercise intent, attempt, refund, payout and chargeback alert families; empty timestamps or incomplete objects are robustness probes, not claims of server-valid payloads.
+
+The CLI tests actual REST commands and JSON output. Webhook delivery parsing is not a CLI capability and is not applicable to this regression.

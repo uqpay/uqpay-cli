@@ -87,6 +87,21 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
 	}
 
+	// AQ-RESPONSE: actual CLI JSON output for independent response shapes.
+	for _, tc := range []struct {
+		args     []string
+		path     string
+		fixtures []string
+	}{
+		{[]string{"payment", "attempt", "get", "pa-1"}, "/v2/payment/payment_attempts/pa-1", []string{`{}`, `{"complete_time":"","advice_code":"","authentication_data":{"cvv_result":""}}`, `{"complete_time":"2026-09-17T00:00:00Z","advice_code":"01","authentication_data":{"cvv_result":"M"}}`}},
+		{[]string{"payment", "refund", "get", "re-1"}, "/v2/payment/refunds/re-1", []string{`{}`, `{"metadata":null}`, `{"metadata":{}}`, `{"metadata":{"ref":"0001"}}`}},
+		{[]string{"payment", "payout", "get", "po-1"}, "/v2/payment/payout/po-1", []string{`{}`, `{"completed_time":""}`, `{"completed_time":"2026-09-17T00:00:00Z"}`}},
+	} {
+		for _, fixture := range tc.fixtures {
+			cases = append(cases, contractCase{tc.args, tc.path, `null`, fixture})
+		}
+	}
+
 	// D122-D129: distinct string values on every balance field, list and detail.
 	fields := []string{"available_balance", "frozen_balance", "margin_balance", "prepaid_balance"}
 	amounts := []string{"0.00", "1.23", "-0.01", "12345678901234567890.12", "-12345678901234567890.12", "0.12345678901234567890"}
