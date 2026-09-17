@@ -87,6 +87,29 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
 	}
 
+	// D189-D196: all changed GET routes, with and without delegation.
+	for _, route := range []struct {
+		args []string
+		path string
+	}{
+		{[]string{"payment", "balance", "list"}, "/v2/payment/balances"},
+		{[]string{"payment", "balance", "get", "USD"}, "/v2/payment/balances/USD"},
+		{[]string{"payment", "bank-account", "list"}, "/v2/payment/bankaccount"},
+		{[]string{"payment", "bank-account", "get", "ba-1"}, "/v2/payment/bankaccount/ba-1"},
+		{[]string{"payment", "payout", "list"}, "/v2/payment/payout"},
+		{[]string{"payment", "payout", "get", "po-1"}, "/v2/payment/payout/po-1"},
+		{[]string{"payment", "settlement", "list"}, "/v2/payment/settlements"},
+		{[]string{"payment", "intent", "get", "pi-1"}, "/v2/payment_intents/pi-1"},
+	} {
+		for _, account := range []string{"sub-account", ""} {
+			args := append([]string{}, route.args...)
+			if account != "" {
+				args = append(args, "--on-behalf-of", account)
+			}
+			cases = append(cases, contractCase{args, route.path, `null`, `{}`})
+		}
+	}
+
 	for _, size := range []int{1, 10, 100} {
 		cases = append(cases, contractCase{[]string{"issuing", "card", "list", "--page-size", strconv.Itoa(size)}, "/v1/issuing/cards", `null`, `{"data":[{"card_id":"card-1","card_limit":"12345678901234567890.12345678","metadata":"{\"ref\":\"0001\"}","risk_controls":null}]}`})
 	}
@@ -130,9 +153,18 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		if err := root.Execute(); err != nil {
 			t.Fatal(err)
 		}
-		if path == "/v2/payment_intents/pi-1" && headers.Get("x-on-behalf-of") != "sub-account" {
-			t.Fatal("missing proxy header")
+		if len(tc.args) > 2 && tc.args[0] == "payment" && (tc.args[2] == "get" || tc.args[2] == "list") {
+			expectedAccount := ""
+			for i, arg := range tc.args {
+				if arg == "--on-behalf-of" {
+					expectedAccount = tc.args[i+1]
+				}
+			}
+			if headers.Get("x-on-behalf-of") != expectedAccount || headers.Get("x-client-id") != "offline-client" {
+				t.Fatalf("%v: headers %v", tc.args, headers)
+			}
 		}
+
 		if pageSize != "" {
 			for i, arg := range tc.args {
 				if arg == "--page-size" && pageSize != tc.args[i+1] {

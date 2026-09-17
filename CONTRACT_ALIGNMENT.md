@@ -45,3 +45,7 @@ Payment intent retrieval supports per-request `x-on-behalf-of` without requiring
 Card creation orders use `CREATE_CARD`. Issuing transfer REST status uses uppercase `PENDING`/`FAILED`/`COMPLETED`; transfer webhook status is a distinct lowercase field. Wallet values remain open strings, including empty and unknown values. The SDK does not infer transaction context from them.
 
 `payment intent get <id> --on-behalf-of <account-id>` sends the proxy header. Command-level tests exercise all three KYC entry points, page sizes 1/10/100 and unchanged JSON output for high-precision amounts and null objects.
+
+## Acquiring GET headers
+
+Offline route-specific checks cover D189–D196: balance list/detail, bank account list/detail, payout list/detail, settlements list and payment intent detail. Each call is exercised with and without `x-on-behalf-of`, while preserving the configured `x-client-id`. Callers need not supply an idempotency key for these GET requests; existing automatic GET headers remain supported. Existing POST idempotency and retry tests remain part of verification.
