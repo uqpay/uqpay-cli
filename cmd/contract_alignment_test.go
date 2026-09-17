@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -16,6 +17,8 @@ func TestAlignedContractHelp(t *testing.T) {
 		words []string
 	}{
 		{[]string{"issuing", "card", "set-pin", "--help"}, []string{"UPDATE", "old_pin", "PROCESSING"}},
+		{[]string{"conversion", "create", "--help"}, []string{"fresh quote", "FUNDS_ARRIVED", "TRADE_SETTLED"}},
+		{[]string{"payment", "intent", "get", "--help"}, []string{"--on-behalf-of"}},
 		{[]string{"issuing", "card", "list", "--help"}, []string{"1-100"}},
 		{[]string{"issuing", "card", "update", "--help"}, []string{"card_art_id", "physical", "PROCESSING"}},
 		{[]string{"beneficiary", "check", "--help"}, []string{"bank_country_code", "At least one"}},
@@ -47,13 +50,16 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 	stdout := os.Stdout
 	defer func() { os.Stdout = stdout }()
 	var captured map[string]interface{}
-	var path, response string
+	var path, response, pageSize string
+	var headers http.Header
 	http.DefaultTransport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		body := response
 		if strings.HasSuffix(r.URL.Path, "/v1/connect/token") {
 			body = `{"auth_token":"offline-token","expired_at":4102444800}`
 		} else {
 			path = r.URL.Path
+			pageSize = r.URL.Query().Get("page_size")
+			headers = r.Header.Clone()
 			captured = nil
 			if r.Body != nil {
 				if err := json.NewDecoder(r.Body).Decode(&captured); err != nil {
@@ -63,10 +69,13 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		}
 		return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": []string{"application/json"}}, Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
 	})
-	cases := []struct {
+	type contractCase struct {
 		args                 []string
 		path, want, response string
-	}{
+	}
+	cases := []contractCase{
+		{[]string{"payment", "intent", "get", "pi-1", "--on-behalf-of", "sub-account"}, "/v2/payment_intents/pi-1", `null`, `{"metadata":null,"latest_payment_attempt":null,"next_action":null,"complete_time":"","amount":"12345678901234567890.12345678"}`},
+		{[]string{"account", "get", "account-1"}, "/v1/accounts/account-1", `null`, `{"entity_type":"COMPANY","business_details":{"legal_entity_name":"Example"}}`},
 		{[]string{"beneficiary", "check", "-d", "entity_type=COMPANY", "-d", "payment_method=LOCAL", "-d", "currency=EUR", "-d", "iban=DE89370400440532013000", "-d", "bank_country_code=DE"}, "/v1/beneficiaries/check", `{"entity_type":"COMPANY","payment_method":"LOCAL","currency":"EUR","iban":"DE89370400440532013000","bank_country_code":"DE"}`, `{"valid":true,"reason":null}`},
 		{[]string{"issuing", "card", "update", "card-1", "-d", "card_art_id=art-1", "-d", "name_on_card=Test"}, "/v1/issuing/cards/card-1", `{"card_art_id":"art-1","name_on_card":"Test"}`, `{"card_order_id":"art-order","order_status":"PROCESSING","amount":"12345678901234567890.12345678","metadata":null}`},
 		{[]string{"issuing", "card", "set-pin", "-d", "card_id=card-1", "-d", "pin=135790", "-d", "type=UPDATE", "-d", "old_pin=024680"}, "/v1/issuing/cards/pin",
@@ -76,6 +85,38 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"simulate", "deposit", "-d", "account_id=account-1", "-d", "amount=10", "-d", "currency=SGD", "-d", "sender_swift_code=WELGBE22"}, "/v1/simulation/deposit",
 			`{"account_id":"account-1","amount":10,"currency":"SGD","sender_swift_code":"WELGBE22"}`, `{"deposit_id":"deposit-1","amount":"10","deposit_status":"PENDING"}`},
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
+	}
+
+	for _, size := range []int{1, 10, 100} {
+		cases = append(cases, contractCase{[]string{"issuing", "card", "list", "--page-size", strconv.Itoa(size)}, "/v1/issuing/cards", `null`, `{"data":[{"card_id":"card-1","card_limit":"12345678901234567890.12345678","metadata":"{\"ref\":\"0001\"}","risk_controls":null}]}`})
+	}
+	for _, provider := range []string{"SUMSUB", "MYINFO", "JUMIO", "DIDIT", "SHUFTI", "REGTANK"} {
+		for _, length := range []int{9, 10, 64, 65} {
+			for _, dob := range []string{"2009-09-17", "2008-09-17", "1947-09-17", "1946-09-17"} {
+				fields := map[string]interface{}{"email": "test@example.test", "first_name": "Test", "last_name": "User", "country_code": "SG", "date_of_birth": dob, "kyc_verification": map[string]interface{}{"method": "THIRD_PARTY", "kyc_proof": map[string]interface{}{"provider": provider, "reference_id": strings.Repeat("r", length)}}}
+				for _, op := range []string{"create", "update", "card"} {
+					args := []string{"issuing", "cardholder", op}
+					path := "/v1/issuing/cardholders"
+					prefix := ""
+					var body interface{} = fields
+					if op == "update" {
+						args = append(args, "holder-1")
+						path += "/holder-1"
+					}
+					if op == "card" {
+						args = []string{"issuing", "card", "create"}
+						path = "/v1/issuing/cards"
+						prefix = "cardholder_required_fields."
+						body = map[string]interface{}{"cardholder_required_fields": fields}
+					}
+					for k, v := range map[string]string{"email": "test@example.test", "first_name": "Test", "last_name": "User", "country_code": "SG", "date_of_birth": dob, "kyc_verification.method": "THIRD_PARTY", "kyc_verification.kyc_proof.provider": provider, "kyc_verification.kyc_proof.reference_id": strings.Repeat("r", length)} {
+						args = append(args, "-d", prefix+k+"="+v)
+					}
+					raw, _ := json.Marshal(body)
+					cases = append(cases, contractCase{args, path, string(raw), `{}`})
+				}
+			}
+		}
 	}
 	for _, tc := range cases {
 		response = tc.response
@@ -88,6 +129,16 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		root.SetArgs(append([]string{"--output", "json"}, tc.args...))
 		if err := root.Execute(); err != nil {
 			t.Fatal(err)
+		}
+		if path == "/v2/payment_intents/pi-1" && headers.Get("x-on-behalf-of") != "sub-account" {
+			t.Fatal("missing proxy header")
+		}
+		if pageSize != "" {
+			for i, arg := range tc.args {
+				if arg == "--page-size" && pageSize != tc.args[i+1] {
+					t.Fatal("page size changed")
+				}
+			}
 		}
 		if !strings.HasSuffix(path, tc.path) {
 			t.Fatalf("path %s want %s", path, tc.path)

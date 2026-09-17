@@ -124,7 +124,7 @@ Flags:
 }
 
 func newPaymentIntentGetCmd() *cobra.Command {
-	var clientID string
+	var clientID, onBehalfOf string
 	cmd := &cobra.Command{
 		Use:   "get <payment-intent-id>",
 		Short: "Retrieve a payment intent",
@@ -146,7 +146,7 @@ Examples:
 			}
 			c := client.New(cfg)
 			data, err := c.GetH(context.Background(), "/v2/payment_intents/"+args[0], nil,
-				map[string]string{"x-client-id": clientID})
+				map[string]string{"x-client-id": clientID, "x-on-behalf-of": onBehalfOf})
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
@@ -155,6 +155,7 @@ Examples:
 		},
 	}
 	cmd.Flags().StringVar(&clientID, "client-id", "", "Client ID (defaults to configured client ID)")
+	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID to act on behalf of")
 	return cmd
 }
 
