@@ -49,3 +49,7 @@ Card creation orders use `CREATE_CARD`. Issuing transfer REST status uses upperc
 ## Acquiring GET headers
 
 Offline route-specific checks cover D189–D196: balance list/detail, bank account list/detail, payout list/detail, settlements list and payment intent detail. Each call is exercised with and without `x-on-behalf-of`, while preserving the configured `x-client-id`. Callers need not supply an idempotency key for these GET requests; existing automatic GET headers remain supported. Existing POST idempotency and retry tests remain part of verification.
+
+## Banking balance precision
+
+Offline D122–D129 fixtures cover `available_balance`, `frozen_balance`, `margin_balance` and `prepaid_balance` through both list and detail reads. Each field receives zero with trailing decimal places, a positive amount, a negative amount, large positive/negative amounts, and a long decimal string. Distinct values across fields detect accidental swaps; comparisons retain strings and precision. Long decimal fixtures test client robustness, not server-supported currency precision. CLI verification covers JSON output.

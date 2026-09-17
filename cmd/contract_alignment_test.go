@@ -87,6 +87,19 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
 	}
 
+	// D122-D129: distinct string values on every balance field, list and detail.
+	fields := []string{"available_balance", "frozen_balance", "margin_balance", "prepaid_balance"}
+	amounts := []string{"0.00", "1.23", "-0.01", "12345678901234567890.12", "-12345678901234567890.12", "0.12345678901234567890"}
+	for i := range amounts {
+		balance := map[string]interface{}{"currency": "USD"}
+		for j, field := range fields {
+			balance[field] = amounts[(i+j)%len(amounts)]
+		}
+		detail, _ := json.Marshal(balance)
+		list, _ := json.Marshal(map[string]interface{}{"data": []interface{}{balance}, "total_pages": 1, "total_items": 1})
+		cases = append(cases, contractCase{[]string{"banking", "balance", "get", "USD"}, "/v1/balances/USD", `null`, string(detail)}, contractCase{[]string{"banking", "balance", "list"}, "/v1/balances", `null`, string(list)})
+	}
+
 	// D189-D196: all changed GET routes, with and without delegation.
 	for _, route := range []struct {
 		args []string
