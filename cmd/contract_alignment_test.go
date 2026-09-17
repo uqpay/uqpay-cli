@@ -50,7 +50,7 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 	stdout := os.Stdout
 	defer func() { os.Stdout = stdout }()
 	var captured map[string]interface{}
-	var path, response, pageSize string
+	var path, response, pageSize, pageNumber, status, method string
 	var headers http.Header
 	http.DefaultTransport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		body := response
@@ -58,6 +58,9 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 			body = `{"auth_token":"offline-token","expired_at":4102444800}`
 		} else {
 			path = r.URL.Path
+			method = r.Method
+			pageNumber = r.URL.Query().Get("page_number")
+			status = r.URL.Query().Get("status")
 			pageSize = r.URL.Query().Get("page_size")
 			headers = r.Header.Clone()
 			captured = nil
@@ -87,6 +90,36 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
 	}
 
+	// RFI list/detail and PIN order fixtures are shared across the five clients.
+	fixtureBytes, err := os.ReadFile("testdata/rfi-orders.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fixtures struct {
+		RFIs   []json.RawMessage `json:"rfis"`
+		Orders []json.RawMessage `json:"orders"`
+	}
+	if err := json.Unmarshal(fixtureBytes, &fixtures); err != nil {
+		t.Fatal(err)
+	}
+	for _, raw := range fixtures.RFIs {
+		var rfi struct {
+			ID string `json:"rfi_id"`
+		}
+		if err := json.Unmarshal(raw, &rfi); err != nil {
+			t.Fatal(err)
+		}
+		cases = append(cases, contractCase{[]string{"rfi", "get", rfi.ID}, "/v1/rfis/" + rfi.ID, `null`, string(raw)}, contractCase{[]string{"rfi", "list", "--page-size", "10", "--page-num", "2", "--status", "ACTION_REQUIRED"}, "/v1/rfis", `null`, `{"data":[` + string(raw) + `],"total_pages":3,"total_items":21}`})
+	}
+	for _, raw := range fixtures.Orders {
+		var order struct {
+			ID string `json:"card_order_id"`
+		}
+		if err := json.Unmarshal(raw, &order); err != nil {
+			t.Fatal(err)
+		}
+		cases = append(cases, contractCase{[]string{"issuing", "card", "get-order", order.ID}, "/v1/issuing/cards/" + order.ID + "/order", `null`, string(raw)})
+	}
 	// AQ-RESPONSE: actual CLI JSON output for independent response shapes.
 	for _, tc := range []struct {
 		args     []string
@@ -193,6 +226,14 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 			}
 		}
 
+		if tc.args[0] == "rfi" && tc.args[1] == "list" {
+			if pageSize != "10" || pageNumber != "2" || status != "ACTION_REQUIRED" {
+				t.Fatalf("RFI query: %s %s %s", pageSize, pageNumber, status)
+			}
+		}
+		if tc.want == "null" && method != "GET" {
+			t.Fatalf("expected GET, got %s", method)
+		}
 		if pageSize != "" {
 			for i, arg := range tc.args {
 				if arg == "--page-size" && pageSize != tc.args[i+1] {
