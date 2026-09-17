@@ -67,8 +67,14 @@ Examples:
 
 const cardUpdateHelp = `Update an existing issuing card.
 
+Card art can be changed on virtual or physical cards when both card_status and
+processing_status are ACTIVE. The response may be PROCESSING; use card_order_id
+to check the asynchronous result.
+
 Parameters (all optional):
     card_limit                              number   Credit limit (omit if card mode_type is SINGLE)
+    card_art_id                             string   Available card art ID
+    name_on_card                            string   Cardholder display name
     no_pin_payment_amount                   number   Max amount for PIN-less transactions (default 200 SGD)
     spending_controls[n].amount             number   Max spend per interval
     spending_controls[n].interval           string   PER_TRANSACTION
@@ -225,7 +231,7 @@ func newCardListCmd() *cobra.Command {
 	cmd.Flags().StringVar(&status, "status", "", "Filter by card status: ACTIVE | FROZEN | BLOCKED | PENDING | CANCELLED | LOST | STOLEN | FAILED")
 	cmd.Flags().StringVar(&cardNumber, "card-number", "", "Filter by card number (masked or full)")
 	cmd.Flags().StringVar(&cardholderID, "cardholder-id", "", "Filter by cardholder ID")
-	cmd.Flags().StringVar(&pageSize, "page-size", "10", "Results per page, 10-100 (default 10)")
+	cmd.Flags().StringVar(&pageSize, "page-size", "10", "Results per page, 1-100 (default 10)")
 	cmd.Flags().StringVar(&pageNum, "page-num", "1", "Page number (default 1)")
 	return cmd
 }

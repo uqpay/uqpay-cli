@@ -16,6 +16,9 @@ func TestAlignedContractHelp(t *testing.T) {
 		words []string
 	}{
 		{[]string{"issuing", "card", "set-pin", "--help"}, []string{"UPDATE", "old_pin", "PROCESSING"}},
+		{[]string{"issuing", "card", "list", "--help"}, []string{"1-100"}},
+		{[]string{"issuing", "card", "update", "--help"}, []string{"card_art_id", "physical", "PROCESSING"}},
+		{[]string{"beneficiary", "check", "--help"}, []string{"bank_country_code", "At least one"}},
 		{[]string{"simulate", "deposit", "--help"}, []string{"account_id"}},
 		{[]string{"rfi", "answer", "--help"}, []string{"TEXT", "attachments"}},
 	} {
@@ -64,6 +67,8 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		args                 []string
 		path, want, response string
 	}{
+		{[]string{"beneficiary", "check", "-d", "entity_type=COMPANY", "-d", "payment_method=LOCAL", "-d", "currency=EUR", "-d", "iban=DE89370400440532013000", "-d", "bank_country_code=DE"}, "/v1/beneficiaries/check", `{"entity_type":"COMPANY","payment_method":"LOCAL","currency":"EUR","iban":"DE89370400440532013000","bank_country_code":"DE"}`, `{"valid":true,"reason":null}`},
+		{[]string{"issuing", "card", "update", "card-1", "-d", "card_art_id=art-1", "-d", "name_on_card=Test"}, "/v1/issuing/cards/card-1", `{"card_art_id":"art-1","name_on_card":"Test"}`, `{"card_order_id":"art-order","order_status":"PROCESSING","amount":"12345678901234567890.12345678","metadata":null}`},
 		{[]string{"issuing", "card", "set-pin", "-d", "card_id=card-1", "-d", "pin=135790", "-d", "type=UPDATE", "-d", "old_pin=024680"}, "/v1/issuing/cards/pin",
 			`{"card_id":"card-1","pin":"135790","type":"UPDATE","old_pin":"024680"}`, `{"request_status":"SUCCESS","card_id":"card-1","card_order_id":"order-1","order_status":"PROCESSING","create_time":"2026-09-17T00:00:00Z"}`},
 		{[]string{"rfi", "answer", "-d", "rfi_id=ACTREQ-test", "-d", "answer[0].key=note", "-d", "answer[0].type=TEXT", "-d", "answer[0].text=source of funds", "-d", "answer[1].key=document", "-d", "answer[1].type=ATTACHMENT", "-d", "answer[1].attachments[0]=file-1"}, "/v1/rfis/answer",
