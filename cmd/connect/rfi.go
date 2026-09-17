@@ -64,6 +64,10 @@ func newRfiAnswerCmd() *cobra.Command {
 	var data []string
 	cmd := &cobra.Command{
 		Use: "answer", Short: "Answer an RFI",
+		Long: `Answer an RFI using the complete rfi_id, including its prefix.
+For TEXT answers, provide answer[n].key, answer[n].type=TEXT and non-empty answer[n].text.
+For ATTACHMENT answers, provide uploaded file IDs in answer[n].attachments[n].
+Response attachments contain file_type, file_name, size and url objects.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
 			if err != nil {

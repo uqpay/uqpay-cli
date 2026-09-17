@@ -253,3 +253,7 @@ Contributions welcome! Please submit an [Issue](https://github.com/uqpay/uqpay-c
 ## License
 
 [MIT](./LICENSE)
+
+## Contract migration notes
+
+See [PIN, RFI, deposit simulation and settlement contracts](CONTRACT_ALIGNMENT.md) for request changes and response interpretation.

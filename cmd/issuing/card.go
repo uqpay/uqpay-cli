@@ -104,15 +104,21 @@ Parameters:
 Examples:
   uqpay issuing card activate -d card_id=card_xxx -d activation_code=123456 -d pin=123456`
 
-const cardSetPinHelp = `Set or reset the PIN of a card.
+const cardSetPinHelp = `Manage a card PIN. Omitted type defaults to SET.
+SUCCESS means accepted, with order_status PROCESSING; retrieve card_order_id for the final result.
 
 Parameters:
   Required:
     card_id   string   Card ID
     pin       string   New PIN — must be a 6-digit numeric value
 
+  Conditional:
+    type      string   SET (default), RESET without current PIN, or UPDATE
+    old_pin   string   Current 6-digit PIN; required for UPDATE, prohibited for SET/RESET
+
 Examples:
-  uqpay issuing card set-pin -d card_id=card_xxx -d pin=123456`
+  uqpay issuing card set-pin -d card_id=card_xxx -d pin=123456
+  uqpay issuing card set-pin -d card_id=card_xxx -d type=UPDATE -d old_pin=024680 -d pin=135790`
 
 const cardAssignHelp = `Assign an unassigned physical card to a cardholder.
 
