@@ -1,5 +1,8 @@
 # uqpay-cli
 
+> This branch prepares SDK/CLI **4.0.0 (unreleased)**. Review [contract migration guidance](CONTRACT_ALIGNMENT.md) before upgrading. Public downloads remain on the published version until a release is explicitly announced.
+
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.21-blue.svg)](https://go.dev/)
 [![npm version](https://img.shields.io/npm/v/@uqpay/cli.svg)](https://www.npmjs.com/package/@uqpay/cli)
@@ -253,3 +256,7 @@ Contributions welcome! Please submit an [Issue](https://github.com/uqpay/uqpay-c
 ## License
 
 [MIT](./LICENSE)
+
+## Contract migration notes
+
+See [PIN, RFI, deposit simulation and settlement contracts](CONTRACT_ALIGNMENT.md) for request changes and response interpretation.

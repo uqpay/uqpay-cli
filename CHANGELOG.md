@@ -5,7 +5,20 @@ All notable changes to `@uqpay/cli` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.0.0] - Unreleased
+
+### Breaking
+
+- Align with the frozen 2026-09-17 contract: PIN `SET`/`RESET`/`UPDATE` semantics,
+  explicit simulated-deposit `account_id`, and separate RFI response attachments.
+- Update response models for decimal strings, nullable fields and asynchronous
+  operation results. See [migration guidance](CONTRACT_ALIGNMENT.md) for language-specific compatibility details.
+
+### Changed
+
+- Align KYC, beneficiary checks, card art, acquiring GET headers and Webhook fields
+  within the approved frozen scope. Later capture/CARD-beneficiary contracts are excluded.
+- Preserve runtime support floors. This version has not been published.
 
 ## [3.0.0]
 

@@ -67,8 +67,14 @@ Examples:
 
 const cardUpdateHelp = `Update an existing issuing card.
 
+Card art can be changed on virtual or physical cards when both card_status and
+processing_status are ACTIVE. The response may be PROCESSING; use card_order_id
+to check the asynchronous result.
+
 Parameters (all optional):
     card_limit                              number   Credit limit (omit if card mode_type is SINGLE)
+    card_art_id                             string   Available card art ID
+    name_on_card                            string   Cardholder display name
     no_pin_payment_amount                   number   Max amount for PIN-less transactions (default 200 SGD)
     spending_controls[n].amount             number   Max spend per interval
     spending_controls[n].interval           string   PER_TRANSACTION
@@ -104,15 +110,21 @@ Parameters:
 Examples:
   uqpay issuing card activate -d card_id=card_xxx -d activation_code=123456 -d pin=123456`
 
-const cardSetPinHelp = `Set or reset the PIN of a card.
+const cardSetPinHelp = `Manage a card PIN. Omitted type defaults to SET.
+SUCCESS means accepted, with order_status PROCESSING; retrieve card_order_id for the final result.
 
 Parameters:
   Required:
     card_id   string   Card ID
     pin       string   New PIN — must be a 6-digit numeric value
 
+  Conditional:
+    type      string   SET (default), RESET without current PIN, or UPDATE
+    old_pin   string   Current 6-digit PIN; required for UPDATE, prohibited for SET/RESET
+
 Examples:
-  uqpay issuing card set-pin -d card_id=card_xxx -d pin=123456`
+  uqpay issuing card set-pin -d card_id=card_xxx -d pin=123456
+  uqpay issuing card set-pin -d card_id=card_xxx -d type=UPDATE -d old_pin=024680 -d pin=135790`
 
 const cardAssignHelp = `Assign an unassigned physical card to a cardholder.
 
@@ -219,7 +231,7 @@ func newCardListCmd() *cobra.Command {
 	cmd.Flags().StringVar(&status, "status", "", "Filter by card status: ACTIVE | FROZEN | BLOCKED | PENDING | CANCELLED | LOST | STOLEN | FAILED")
 	cmd.Flags().StringVar(&cardNumber, "card-number", "", "Filter by card number (masked or full)")
 	cmd.Flags().StringVar(&cardholderID, "cardholder-id", "", "Filter by cardholder ID")
-	cmd.Flags().StringVar(&pageSize, "page-size", "10", "Results per page, 10-100 (default 10)")
+	cmd.Flags().StringVar(&pageSize, "page-size", "10", "Results per page, 1-100 (default 10)")
 	cmd.Flags().StringVar(&pageNum, "page-num", "1", "Page number (default 1)")
 	return cmd
 }

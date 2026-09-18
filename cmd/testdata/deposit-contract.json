@@ -1,0 +1,696 @@
+[
+  {
+    "name": "LOCAL|INDIVIDUAL|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "LOCAL|INDIVIDUAL|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "LOCAL|INDIVIDUAL|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "LOCAL|COMPANY|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "LOCAL|COMPANY|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "LOCAL|COMPANY|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "LOCAL||NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "LOCAL||NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "LOCAL||",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "LOCAL",
+      "sender": {
+        "sender_type": "",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "SWIFT|INDIVIDUAL|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "SWIFT|INDIVIDUAL|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "SWIFT|INDIVIDUAL|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "SWIFT|COMPANY|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "SWIFT|COMPANY|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "SWIFT|COMPANY|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "SWIFT||NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "SWIFT||NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "SWIFT||",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "sender": {
+        "sender_type": "",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER|INDIVIDUAL|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER|INDIVIDUAL|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER|INDIVIDUAL|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER|COMPANY|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER|COMPANY|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER|COMPANY|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER||NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER||NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "UQPAY_TRANSFER||",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "UQPAY_TRANSFER",
+      "sender": {
+        "sender_type": "",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "|INDIVIDUAL|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "|INDIVIDUAL|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "|INDIVIDUAL|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "INDIVIDUAL",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "|COMPANY|NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "|COMPANY|NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "|COMPANY|",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "||NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NAMED"
+      }
+    }
+  },
+  {
+    "name": "||NON_NAMED",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "",
+        "name_type": "NON_NAMED"
+      }
+    }
+  },
+  {
+    "name": "||",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "",
+        "name_type": ""
+      }
+    }
+  },
+  {
+    "name": "all-sender-fields-empty",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "PENDING",
+      "complete_time": null,
+      "receiver_account_number": "000123456",
+      "deposit_method": "",
+      "sender": {
+        "sender_type": "",
+        "name_type": "",
+        "sender_name": "",
+        "sender_country": "",
+        "sender_account_number": "",
+        "sender_swift_code": ""
+      }
+    }
+  },
+  {
+    "name": "complete-sender",
+    "body": {
+      "deposit_id": "deposit-1",
+      "short_reference_id": "D260917-TEST",
+      "amount": "100.00",
+      "currency": "SGD",
+      "deposit_fee": "0.00",
+      "deposit_status": "COMPLETED",
+      "complete_time": "2026-09-17T00:01:00Z",
+      "receiver_account_number": "000123456",
+      "deposit_method": "SWIFT",
+      "create_time": "2026-09-17T00:00:00Z",
+      "deposit_reference": "test-reference",
+      "sender": {
+        "sender_type": "COMPANY",
+        "name_type": "NON_NAMED",
+        "sender_name": "Example",
+        "sender_country": "SG",
+        "sender_account_number": "000ABC123",
+        "sender_swift_code": "DBSSSGSG"
+      }
+    }
+  }
+]

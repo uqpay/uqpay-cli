@@ -128,10 +128,14 @@ Examples:
 
 const beneficiaryCheckHelp = `Check if a beneficiary bank account is valid.
 
+At least one non-empty account_number or iban is required.
+If both are supplied, account_number takes precedence.
+For LOCAL currencies without a default route (including CNH), bank_country_code
+and clearing_system are required. For SWIFT, use clearing_system=SWIFT.
+
 Parameters:
   Required:
     entity_type      string   COMPANY | INDIVIDUAL
-    account_number   string   Bank account number (or iban)
     payment_method   string   LOCAL | SWIFT
     currency         string   ISO 4217 currency code
 
@@ -140,7 +144,9 @@ Parameters:
     last_name        string   Last name (INDIVIDUAL only)
     company_name     string   Company name (COMPANY only)
     clearing_system  string   LOCAL | SWIFT | ACH | FAST | MEPS | GIRO | Fedwire | Faster Payments | RTGS | FPS | EFT | Interac e-Transfer | Bill Payment | CHAPS | Bank Transfer | NPP | BPAY
-    iban             string   IBAN (for European countries)
+    account_number   string   Bank account number (alternative to iban)
+    iban             string   IBAN (alternative to account_number)
+    bank_country_code string  Bank country; required depending on payment method and currency
     additional_info  object   Additional information
 
 Examples:

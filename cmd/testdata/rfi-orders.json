@@ -1,0 +1,177 @@
+{
+  "rfis": [
+    {
+      "account_id": "account-1",
+      "rfi_id": "ACTREQ-895487f0-3220-4aae-81ad-a20dba6fa2d9",
+      "status": "APPROVED",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "request": [
+        {
+          "question": {
+            "key": "document",
+            "comment": "Provide proof",
+            "type": "ATTACHMENT"
+          },
+          "answer": {
+            "key": "document",
+            "type": "ATTACHMENT",
+            "attachments": [
+              {
+                "file_type": "pdf",
+                "file_name": "proof.pdf",
+                "size": 42,
+                "url": "https://example.test/proof"
+              },
+              {
+                "file_type": "png",
+                "file_name": "proof.png",
+                "size": 84,
+                "url": "https://example.test/image"
+              }
+            ]
+          }
+        },
+        {
+          "question": {
+            "key": "note",
+            "comment": "Explain source",
+            "type": "TEXT"
+          },
+          "answer": {
+            "key": "note",
+            "type": "TEXT",
+            "text": "source of funds"
+          }
+        }
+      ]
+    },
+    {
+      "account_id": "account-1",
+      "rfi_id": "ACTREQ-895487f0-3220-4aae-81ad-a20dba6fa2d9",
+      "status": "ACTION_REQUIRED",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "request": [
+        {
+          "question": {
+            "key": "document",
+            "comment": "Provide proof",
+            "type": "ATTACHMENT"
+          }
+        },
+        {
+          "question": {
+            "key": "note",
+            "comment": "Explain source",
+            "type": "TEXT"
+          }
+        }
+      ]
+    },
+    {
+      "account_id": "account-1",
+      "rfi_id": "ACTREQ-895487f0-3220-4aae-81ad-a20dba6fa2d9",
+      "status": "APPROVED",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "request": [
+        {
+          "question": {
+            "key": "document",
+            "comment": "Provide proof",
+            "type": "ATTACHMENT"
+          },
+          "answer": {
+            "key": "document",
+            "type": "ATTACHMENT",
+            "attachments": []
+          }
+        },
+        {
+          "question": {
+            "key": "note",
+            "comment": "Explain source",
+            "type": "TEXT"
+          },
+          "answer": {
+            "key": "note",
+            "type": "TEXT",
+            "text": "source of funds"
+          }
+        }
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "card_id": "card-1",
+      "card_order_id": "pin-order-1",
+      "order_type": "PIN_MANAGEMENT",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "",
+      "order_status": "PROCESSING"
+    },
+    {
+      "card_id": "card-1",
+      "card_order_id": "pin-order-1",
+      "order_type": "PIN_MANAGEMENT",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "2026-09-17T02:00:00Z",
+      "order_status": "SUCCESS"
+    },
+    {
+      "card_id": "card-1",
+      "card_order_id": "pin-order-1",
+      "order_type": "PIN_MANAGEMENT",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "2026-09-17T02:00:00Z",
+      "order_status": "FAILED",
+      "failure_code": "INVALID_PIN"
+    },
+    {
+      "card_id": "card-1",
+      "card_order_id": "pin-order-1",
+      "order_type": "PIN_MANAGEMENT",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "2026-09-17T02:00:00Z",
+      "order_status": "FAILED"
+    },
+    {
+      "card_id": "card-1",
+      "card_order_id": "pin-order-1",
+      "order_type": "PIN_MANAGEMENT",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "2026-09-17T02:00:00Z",
+      "order_status": "FAILED",
+      "failure_code": ""
+    },
+    {
+      "card_id": "card-1",
+      "card_order_id": "recharge-order-1",
+      "order_type": "CARD_RECHARGE",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "2026-09-17T02:00:00Z",
+      "order_status": "SUCCESS",
+      "amount": 1.25,
+      "card_currency": "USD"
+    },
+    {
+      "card_id": "card-1",
+      "card_order_id": "recharge-order-1",
+      "order_type": "CARD_RECHARGE",
+      "create_time": "2026-09-17T00:00:00Z",
+      "update_time": "2026-09-17T01:00:00Z",
+      "complete_time": "2026-09-17T02:00:00Z",
+      "order_status": "SUCCESS",
+      "amount": "1.25",
+      "card_currency": "USD"
+    }
+  ]
+}

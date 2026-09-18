@@ -33,6 +33,9 @@ Examples:
 
 const conversionCreateHelp = `Create a currency conversion from a quote.
 
+Use a fresh quote for each conversion; a quote cannot be reused.
+FUNDS_ARRIVED is an intermediate state. TRADE_SETTLED is the successful terminal state.
+
 Parameters:
   Required:
     quote_id          string   Quote ID obtained from "conversion quote"

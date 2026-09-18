@@ -121,6 +121,7 @@ func newSimulateDepositCmd() *cobra.Command {
 
 Parameters:
   Required:
+    account_id                string   Active, verified recipient account ID
     amount                    number   Amount to deposit
     currency                  string   ISO 4217 currency code (e.g. SGD, USD)
     sender_swift_code         string   Sender's bank SWIFT code (e.g. WELGBE22)
@@ -133,12 +134,14 @@ Parameters:
 
 Examples:
   uqpay simulate deposit \
+    -d account_id=<account-id> \
     -d amount=1000 \
     -d currency=SGD \
     -d sender_swift_code=WELGBE22 \
     -d receiver_account_number=SG123456789012345678
 
   uqpay simulate deposit \
+    -d account_id=<account-id> \
     -d amount=500 \
     -d currency=USD \
     -d sender_swift_code=WELGBE22 \
