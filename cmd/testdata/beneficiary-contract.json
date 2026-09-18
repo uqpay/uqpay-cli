@@ -1,0 +1,407 @@
+[
+  {
+    "name": "account-only",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "currency": "EUR",
+      "account_number": "000ABC123"
+    },
+    "body": {}
+  },
+  {
+    "name": "iban-only",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "currency": "EUR",
+      "iban": "DE89370400440532013000"
+    },
+    "body": {}
+  },
+  {
+    "name": "empty-account-with-iban",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "currency": "EUR",
+      "account_number": "",
+      "iban": "DE89370400440532013000"
+    },
+    "body": {}
+  },
+  {
+    "name": "both",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "currency": "EUR",
+      "account_number": "000ABC123",
+      "iban": "DE89370400440532013000"
+    },
+    "body": {}
+  },
+  {
+    "name": "account-60",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "currency": "EUR",
+      "account_number": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "body": {}
+  },
+  {
+    "name": "local-explicit-route",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "INDIVIDUAL",
+      "payment_method": "LOCAL",
+      "currency": "CNH",
+      "account_number": "0012345",
+      "bank_country_code": "CN",
+      "clearing_system": "LOCAL",
+      "first_name": "Test",
+      "last_name": "User"
+    },
+    "body": {}
+  },
+  {
+    "name": "swift",
+    "operation": "check",
+    "path": "/v1/beneficiaries/check",
+    "request": {
+      "entity_type": "COMPANY",
+      "payment_method": "SWIFT",
+      "currency": "USD",
+      "clearing_system": "SWIFT",
+      "account_number": "000123456"
+    },
+    "body": {}
+  },
+  {
+    "name": "INDIVIDUAL-local-empty",
+    "operation": "list",
+    "path": "/v1/beneficiaries",
+    "body": {
+      "data": [
+        {
+          "beneficiary_id": "beneficiary-1",
+          "entity_type": "INDIVIDUAL",
+          "payment_method": "LOCAL",
+          "bank_details": {
+            "bank_country_code": "SG",
+            "account_currency_code": "SGD"
+          },
+          "address": {
+            "country": "SG",
+            "city": "",
+            "state": "",
+            "street_address": "",
+            "postal_code": "123456",
+            "nationality": ""
+          },
+          "first_name": "Test",
+          "last_name": "User"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "INDIVIDUAL-local-empty",
+    "operation": "get",
+    "path": "/v1/beneficiaries/beneficiary-1",
+    "body": {
+      "beneficiary_id": "beneficiary-1",
+      "entity_type": "INDIVIDUAL",
+      "payment_method": "LOCAL",
+      "bank_details": {
+        "bank_country_code": "SG",
+        "account_currency_code": "SGD"
+      },
+      "address": {
+        "country": "SG",
+        "city": "",
+        "state": "",
+        "street_address": "",
+        "postal_code": "123456",
+        "nationality": ""
+      },
+      "first_name": "Test",
+      "last_name": "User"
+    }
+  },
+  {
+    "name": "INDIVIDUAL-local-full",
+    "operation": "list",
+    "path": "/v1/beneficiaries",
+    "body": {
+      "data": [
+        {
+          "beneficiary_id": "beneficiary-1",
+          "entity_type": "INDIVIDUAL",
+          "payment_method": "LOCAL",
+          "bank_details": {
+            "bank_country_code": "SG",
+            "account_currency_code": "SGD"
+          },
+          "address": {
+            "country": "SG",
+            "city": "Singapore",
+            "state": "Singapore",
+            "street_address": "1 Test Street",
+            "postal_code": "123456",
+            "nationality": "SG"
+          },
+          "first_name": "Test",
+          "last_name": "User"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "INDIVIDUAL-local-full",
+    "operation": "get",
+    "path": "/v1/beneficiaries/beneficiary-1",
+    "body": {
+      "beneficiary_id": "beneficiary-1",
+      "entity_type": "INDIVIDUAL",
+      "payment_method": "LOCAL",
+      "bank_details": {
+        "bank_country_code": "SG",
+        "account_currency_code": "SGD"
+      },
+      "address": {
+        "country": "SG",
+        "city": "Singapore",
+        "state": "Singapore",
+        "street_address": "1 Test Street",
+        "postal_code": "123456",
+        "nationality": "SG"
+      },
+      "first_name": "Test",
+      "last_name": "User"
+    }
+  },
+  {
+    "name": "INDIVIDUAL-swift-full",
+    "operation": "list",
+    "path": "/v1/beneficiaries",
+    "body": {
+      "data": [
+        {
+          "beneficiary_id": "beneficiary-1",
+          "entity_type": "INDIVIDUAL",
+          "payment_method": "SWIFT",
+          "bank_details": {
+            "bank_country_code": "US",
+            "account_currency_code": "USD"
+          },
+          "address": {
+            "country": "US",
+            "city": "New York",
+            "state": "NY",
+            "street_address": "1 Test Street",
+            "postal_code": "10001"
+          },
+          "first_name": "Test",
+          "last_name": "User"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "INDIVIDUAL-swift-full",
+    "operation": "get",
+    "path": "/v1/beneficiaries/beneficiary-1",
+    "body": {
+      "beneficiary_id": "beneficiary-1",
+      "entity_type": "INDIVIDUAL",
+      "payment_method": "SWIFT",
+      "bank_details": {
+        "bank_country_code": "US",
+        "account_currency_code": "USD"
+      },
+      "address": {
+        "country": "US",
+        "city": "New York",
+        "state": "NY",
+        "street_address": "1 Test Street",
+        "postal_code": "10001"
+      },
+      "first_name": "Test",
+      "last_name": "User"
+    }
+  },
+  {
+    "name": "COMPANY-local-empty",
+    "operation": "list",
+    "path": "/v1/beneficiaries",
+    "body": {
+      "data": [
+        {
+          "beneficiary_id": "beneficiary-1",
+          "entity_type": "COMPANY",
+          "payment_method": "LOCAL",
+          "bank_details": {
+            "bank_country_code": "SG",
+            "account_currency_code": "SGD"
+          },
+          "address": {
+            "country": "SG",
+            "city": "",
+            "state": "",
+            "street_address": "",
+            "postal_code": "123456",
+            "nationality": ""
+          },
+          "company_name": "Example"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "COMPANY-local-empty",
+    "operation": "get",
+    "path": "/v1/beneficiaries/beneficiary-1",
+    "body": {
+      "beneficiary_id": "beneficiary-1",
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "bank_details": {
+        "bank_country_code": "SG",
+        "account_currency_code": "SGD"
+      },
+      "address": {
+        "country": "SG",
+        "city": "",
+        "state": "",
+        "street_address": "",
+        "postal_code": "123456",
+        "nationality": ""
+      },
+      "company_name": "Example"
+    }
+  },
+  {
+    "name": "COMPANY-local-full",
+    "operation": "list",
+    "path": "/v1/beneficiaries",
+    "body": {
+      "data": [
+        {
+          "beneficiary_id": "beneficiary-1",
+          "entity_type": "COMPANY",
+          "payment_method": "LOCAL",
+          "bank_details": {
+            "bank_country_code": "SG",
+            "account_currency_code": "SGD"
+          },
+          "address": {
+            "country": "SG",
+            "city": "Singapore",
+            "state": "Singapore",
+            "street_address": "1 Test Street",
+            "postal_code": "123456",
+            "nationality": "SG"
+          },
+          "company_name": "Example"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "COMPANY-local-full",
+    "operation": "get",
+    "path": "/v1/beneficiaries/beneficiary-1",
+    "body": {
+      "beneficiary_id": "beneficiary-1",
+      "entity_type": "COMPANY",
+      "payment_method": "LOCAL",
+      "bank_details": {
+        "bank_country_code": "SG",
+        "account_currency_code": "SGD"
+      },
+      "address": {
+        "country": "SG",
+        "city": "Singapore",
+        "state": "Singapore",
+        "street_address": "1 Test Street",
+        "postal_code": "123456",
+        "nationality": "SG"
+      },
+      "company_name": "Example"
+    }
+  },
+  {
+    "name": "COMPANY-swift-full",
+    "operation": "list",
+    "path": "/v1/beneficiaries",
+    "body": {
+      "data": [
+        {
+          "beneficiary_id": "beneficiary-1",
+          "entity_type": "COMPANY",
+          "payment_method": "SWIFT",
+          "bank_details": {
+            "bank_country_code": "US",
+            "account_currency_code": "USD"
+          },
+          "address": {
+            "country": "US",
+            "city": "New York",
+            "state": "NY",
+            "street_address": "1 Test Street",
+            "postal_code": "10001"
+          },
+          "company_name": "Example"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "COMPANY-swift-full",
+    "operation": "get",
+    "path": "/v1/beneficiaries/beneficiary-1",
+    "body": {
+      "beneficiary_id": "beneficiary-1",
+      "entity_type": "COMPANY",
+      "payment_method": "SWIFT",
+      "bank_details": {
+        "bank_country_code": "US",
+        "account_currency_code": "USD"
+      },
+      "address": {
+        "country": "US",
+        "city": "New York",
+        "state": "NY",
+        "street_address": "1 Test Street",
+        "postal_code": "10001"
+      },
+      "company_name": "Example"
+    }
+  }
+]

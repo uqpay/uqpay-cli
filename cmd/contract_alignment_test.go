@@ -134,6 +134,36 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		}
 		cases = append(cases, contractCase{args, fixture.Path, want, string(fixture.Body)})
 	}
+	beneficiaryRaw, err := os.ReadFile("testdata/beneficiary-contract.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var beneficiaryCases []struct {
+		Operation, Path string
+		Request         map[string]string
+		Body            json.RawMessage
+	}
+	if err := json.Unmarshal(beneficiaryRaw, &beneficiaryCases); err != nil {
+		t.Fatal(err)
+	}
+	for _, fixture := range beneficiaryCases {
+		args := []string{"beneficiary", fixture.Operation}
+		want := `null`
+		if fixture.Operation == "get" {
+			args = append(args, "beneficiary-1")
+		}
+		if fixture.Operation == "check" {
+			for key, value := range fixture.Request {
+				args = append(args, "-d", key+"="+value)
+			}
+			raw, err := json.Marshal(fixture.Request)
+			if err != nil {
+				t.Fatal(err)
+			}
+			want = string(raw)
+		}
+		cases = append(cases, contractCase{args, fixture.Path, want, string(fixture.Body)})
+	}
 	// D044/D094: detail-only status; missing detail is legacy robustness.
 	for _, status := range []string{"UNKNOWN", "UNSETTLED", "SETTLED", "NOT_APPLICABLE", ""} {
 		body := `{"transaction_id":"tx-1"}`
@@ -285,6 +315,9 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 			}
 		}
 		if len(tc.args) > 2 && tc.args[0] == "issuing" && tc.args[1] == "card" && tc.args[2] == "update-status" && method != "POST" {
+			t.Fatal("expected POST", method)
+		}
+		if tc.path == "/v1/beneficiaries/check" && method != "POST" {
 			t.Fatal("expected POST", method)
 		}
 		if tc.want == "null" && method != "GET" {
