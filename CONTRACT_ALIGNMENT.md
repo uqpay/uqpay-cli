@@ -1,5 +1,7 @@
 # API contract alignment
 
+Target compatibility cohort: **4.0.0 (unreleased)**. This branch is prepared for review; no tag or package publication is implied.
+
 Contract reference: [OpenAPI revision 1feb1d2](https://github.com/uqpay/uqpay-docs/tree/1feb1d26d032c53b79ab44a7d48e88c9a91d397d/docs).
 
 ## PIN management
