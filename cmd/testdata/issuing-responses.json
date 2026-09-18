@@ -1,0 +1,364 @@
+[
+  {
+    "name": "missing",
+    "operation": "cards.list",
+    "path": "/v1/issuing/cards",
+    "body": {
+      "data": [
+        {
+          "card_id": "card-1",
+          "card_bin": "40963608",
+          "mode_type": "SINGLE",
+          "card_scheme": "VISA",
+          "card_number": "************1234",
+          "form_factor": "VIRTUAL",
+          "card_limit": "12345678901234567890.12",
+          "available_balance": "0.01",
+          "cardholder": {},
+          "card_status": "ACTIVE"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "missing",
+    "operation": "cards.get",
+    "path": "/v1/issuing/cards/card-1",
+    "body": {
+      "card_id": "card-1",
+      "card_bin": "40963608",
+      "mode_type": "SINGLE",
+      "card_scheme": "VISA",
+      "card_number": "************1234",
+      "form_factor": "VIRTUAL",
+      "card_limit": 1.25,
+      "available_balance": "0.01",
+      "cardholder": {},
+      "card_status": "ACTIVE",
+      "no_pin_payment_amount": "200USD"
+    }
+  },
+  {
+    "name": "empty",
+    "operation": "cards.list",
+    "path": "/v1/issuing/cards",
+    "body": {
+      "data": [
+        {
+          "card_id": "card-1",
+          "card_bin": "40963608",
+          "mode_type": "SINGLE",
+          "card_scheme": "VISA",
+          "card_number": "************1234",
+          "form_factor": "VIRTUAL",
+          "card_limit": "12345678901234567890.12",
+          "available_balance": "0.01",
+          "cardholder": {},
+          "card_status": "ACTIVE",
+          "metadata": "",
+          "risk_controls": null
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "empty",
+    "operation": "cards.get",
+    "path": "/v1/issuing/cards/card-1",
+    "body": {
+      "card_id": "card-1",
+      "card_bin": "40963608",
+      "mode_type": "SINGLE",
+      "card_scheme": "VISA",
+      "card_number": "************1234",
+      "form_factor": "VIRTUAL",
+      "card_limit": 1.25,
+      "available_balance": "0.01",
+      "cardholder": {},
+      "card_status": "ACTIVE",
+      "no_pin_payment_amount": "200USD",
+      "metadata": null
+    }
+  },
+  {
+    "name": "object",
+    "operation": "cards.list",
+    "path": "/v1/issuing/cards",
+    "body": {
+      "data": [
+        {
+          "card_id": "card-1",
+          "card_bin": "40963608",
+          "mode_type": "SINGLE",
+          "card_scheme": "VISA",
+          "card_number": "************1234",
+          "form_factor": "VIRTUAL",
+          "card_limit": "12345678901234567890.12",
+          "available_balance": "0.01",
+          "cardholder": {},
+          "card_status": "ACTIVE",
+          "metadata": "{}",
+          "risk_controls": {}
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "object",
+    "operation": "cards.get",
+    "path": "/v1/issuing/cards/card-1",
+    "body": {
+      "card_id": "card-1",
+      "card_bin": "40963608",
+      "mode_type": "SINGLE",
+      "card_scheme": "VISA",
+      "card_number": "************1234",
+      "form_factor": "VIRTUAL",
+      "card_limit": 1.25,
+      "available_balance": "0.01",
+      "cardholder": {},
+      "card_status": "ACTIVE",
+      "no_pin_payment_amount": "200USD",
+      "metadata": {},
+      "risk_controls": {}
+    }
+  },
+  {
+    "name": "populated",
+    "operation": "cards.list",
+    "path": "/v1/issuing/cards",
+    "body": {
+      "data": [
+        {
+          "card_id": "card-1",
+          "card_bin": "40963608",
+          "mode_type": "SINGLE",
+          "card_scheme": "VISA",
+          "card_number": "************1234",
+          "form_factor": "VIRTUAL",
+          "card_limit": "12345678901234567890.12",
+          "available_balance": "0.01",
+          "cardholder": {
+            "cardholder_id": "holder-1",
+            "cardholder_status": "SUCCESS",
+            "create_time": "2026-09-17T00:00:00Z",
+            "email": "test@example.test",
+            "first_name": "Test",
+            "last_name": "User"
+          },
+          "card_status": "ACTIVE",
+          "metadata": "{\"reference\": \"0001\", \"unicode\": \"测试\", \"empty\": \"\"}",
+          "card_currency": "USD",
+          "card_product_id": "product-1",
+          "risk_controls": {
+            "allow_3ds_transactions": "Y"
+          },
+          "update_reason": "test",
+          "consumed_amount": "0.00"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "populated",
+    "operation": "cards.get",
+    "path": "/v1/issuing/cards/card-1",
+    "body": {
+      "card_id": "card-1",
+      "card_bin": "40963608",
+      "mode_type": "SINGLE",
+      "card_scheme": "VISA",
+      "card_number": "************1234",
+      "form_factor": "VIRTUAL",
+      "card_limit": 1.25,
+      "available_balance": "0.01",
+      "cardholder": {
+        "cardholder_id": "holder-1",
+        "cardholder_status": "SUCCESS",
+        "create_time": "2026-09-17T00:00:00Z",
+        "email": "test@example.test",
+        "first_name": "Test",
+        "last_name": "User"
+      },
+      "card_status": "ACTIVE",
+      "no_pin_payment_amount": "200USD",
+      "metadata": {
+        "reference": "0001",
+        "unicode": "测试",
+        "empty": ""
+      },
+      "card_currency": "USD",
+      "card_product_id": "product-1",
+      "risk_controls": {
+        "allow_3ds_transactions": "Y"
+      },
+      "update_reason": "test",
+      "consumed_amount": "0.00"
+    }
+  },
+  {
+    "name": "missing",
+    "operation": "cardholders.list",
+    "path": "/v1/issuing/cardholders",
+    "body": {
+      "data": [
+        {}
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "missing",
+    "operation": "cardholders.get",
+    "path": "/v1/issuing/cardholders/holder-1",
+    "body": {}
+  },
+  {
+    "name": "empty",
+    "operation": "cardholders.list",
+    "path": "/v1/issuing/cardholders",
+    "body": {
+      "data": [
+        {
+          "gender": "",
+          "nationality": ""
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "empty",
+    "operation": "cardholders.get",
+    "path": "/v1/issuing/cardholders/holder-1",
+    "body": {
+      "gender": "",
+      "nationality": ""
+    }
+  },
+  {
+    "name": "populated",
+    "operation": "cardholders.list",
+    "path": "/v1/issuing/cardholders",
+    "body": {
+      "data": [
+        {
+          "cardholder_id": "holder-1",
+          "gender": "FEMALE",
+          "nationality": "SG"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "populated",
+    "operation": "cardholders.get",
+    "path": "/v1/issuing/cardholders/holder-1",
+    "body": {
+      "cardholder_id": "holder-1",
+      "gender": "FEMALE",
+      "nationality": "SG"
+    }
+  },
+  {
+    "name": "optional-absent",
+    "operation": "products.list",
+    "path": "/v1/issuing/products",
+    "body": {
+      "data": [
+        {
+          "product_id": "product-1",
+          "card_bin": "40963608",
+          "card_scheme": "VISA",
+          "create_time": "2026-09-17T00:00:00Z",
+          "update_time": "2026-09-17T00:00:00Z",
+          "product_status": "ENABLED",
+          "no_pin_payment_amount": [
+            {
+              "amount": "200.00",
+              "currency": "USD"
+            }
+          ],
+          "card_form": [
+            "VIR",
+            "PHY"
+          ],
+          "card_currency": [
+            "USD",
+            "SGD"
+          ]
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "optional-present",
+    "operation": "products.list",
+    "path": "/v1/issuing/products",
+    "body": {
+      "data": [
+        {
+          "product_id": "product-1",
+          "card_bin": "40963608",
+          "card_scheme": "VISA",
+          "create_time": "2026-09-17T00:00:00Z",
+          "update_time": "2026-09-17T00:00:00Z",
+          "product_status": "ENABLED",
+          "no_pin_payment_amount": [
+            {
+              "amount": "200.00",
+              "currency": "USD"
+            }
+          ],
+          "card_form": [
+            "VIR",
+            "PHY"
+          ],
+          "card_currency": [
+            "USD",
+            "SGD"
+          ],
+          "mode_type": "SINGLE",
+          "max_card_quota": 0
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "name": "reason-absent",
+    "operation": "cards.status",
+    "path": "/v1/issuing/cards/card-1/status",
+    "body": {
+      "card_id": "card-1",
+      "card_order_id": "order-1",
+      "order_status": "PROCESSING"
+    }
+  },
+  {
+    "name": "reason-present",
+    "operation": "cards.status",
+    "path": "/v1/issuing/cards/card-1/status",
+    "body": {
+      "card_id": "card-1",
+      "card_order_id": "order-1",
+      "order_status": "PROCESSING",
+      "update_reason": "Requested freeze"
+    }
+  }
+]

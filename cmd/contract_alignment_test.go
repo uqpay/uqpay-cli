@@ -111,6 +111,29 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		}
 		cases = append(cases, contractCase{args, fixture.Path, `null`, string(fixture.Body)})
 	}
+	issuingRaw, err := os.ReadFile("testdata/issuing-responses.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(issuingRaw, &moneyCases); err != nil {
+		t.Fatal(err)
+	}
+	issuingCommands := map[string][]string{
+		"cards.list": {"issuing", "card", "list"}, "cards.get": {"issuing", "card", "get", "card-1"},
+		"cardholders.list": {"issuing", "cardholder", "list"}, "cardholders.get": {"issuing", "cardholder", "get", "holder-1"},
+		"products.list": {"issuing", "product", "list"}, "cards.status": {"issuing", "card", "update-status", "card-1", "-d", "card_status=FROZEN"},
+	}
+	for _, fixture := range moneyCases {
+		args, ok := issuingCommands[fixture.Operation]
+		if !ok {
+			t.Fatal(fixture.Operation)
+		}
+		want := `null`
+		if fixture.Operation == "cards.status" {
+			want = `{"card_status":"FROZEN"}`
+		}
+		cases = append(cases, contractCase{args, fixture.Path, want, string(fixture.Body)})
+	}
 	// D044/D094: detail-only status; missing detail is legacy robustness.
 	for _, status := range []string{"UNKNOWN", "UNSETTLED", "SETTLED", "NOT_APPLICABLE", ""} {
 		body := `{"transaction_id":"tx-1"}`
@@ -260,6 +283,9 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 			if pageSize != "10" || pageNumber != "2" || status != "ACTION_REQUIRED" {
 				t.Fatalf("RFI query: %s %s %s", pageSize, pageNumber, status)
 			}
+		}
+		if len(tc.args) > 2 && tc.args[0] == "issuing" && tc.args[1] == "card" && tc.args[2] == "update-status" && method != "POST" {
+			t.Fatal("expected POST", method)
 		}
 		if tc.want == "null" && method != "GET" {
 			t.Fatalf("expected GET, got %s", method)
