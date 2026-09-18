@@ -1,0 +1,274 @@
+[
+  {
+    "operation": "accounts.list",
+    "path": "/v1/accounts",
+    "body": {
+      "data": [
+        {
+          "account_id": "account-1",
+          "entity_type": "COMPANY",
+          "business_details": {
+            "legal_entity_name": "Example",
+            "registration_number": "reg-1",
+            "incorporation_date": "2020-01-01",
+            "merchant_category_code": "5734"
+          }
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "accounts.list",
+    "path": "/v1/accounts",
+    "body": {
+      "data": [
+        {
+          "account_id": "account-1",
+          "entity_type": "INDIVIDUAL",
+          "person_details": {
+            "first_name": "Test",
+            "last_name": "User"
+          }
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "accounts.get",
+    "path": "/v1/accounts/account-1",
+    "body": {
+      "account_id": "account-1",
+      "entity_type": "COMPANY",
+      "business_details": {
+        "legal_entity_name_english": "Example",
+        "account_purpose": [
+          "CARD_ISSUING"
+        ],
+        "product_description": "Example service"
+      }
+    }
+  },
+  {
+    "operation": "accounts.get",
+    "path": "/v1/accounts/account-1",
+    "body": {
+      "account_id": "account-1",
+      "entity_type": "INDIVIDUAL",
+      "person_details": {
+        "first_name": "Test",
+        "last_name": "User"
+      },
+      "residential_address": {
+        "country": "SG",
+        "line1": "Test Street",
+        "city": "Singapore",
+        "state": "Singapore",
+        "postal_code": "138588"
+      }
+    }
+  },
+  {
+    "operation": "transactions.get",
+    "path": "/v1/issuing/transactions/tx-1",
+    "body": {
+      "transaction_id": "tx-1",
+      "original_transaction_id": "",
+      "short_transaction_id": "TXN-not-a-uuid",
+      "transaction_amount": "12345678901234567890.12345678",
+      "billing_amount": "0.00",
+      "transaction_fee": "0.01",
+      "card_available_balance": "-0.01"
+    }
+  },
+  {
+    "operation": "transactions.list",
+    "path": "/v1/issuing/transactions",
+    "body": {
+      "data": [
+        {
+          "transaction_id": "tx-1",
+          "original_transaction_id": "",
+          "short_transaction_id": "TXN-not-a-uuid",
+          "transaction_amount": "12345678901234567890.12345678",
+          "billing_amount": "0.00",
+          "transaction_fee": "0.01",
+          "card_available_balance": "-0.01"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "transactions.get",
+    "path": "/v1/issuing/transactions/tx-1",
+    "body": {
+      "transaction_id": "tx-1",
+      "original_transaction_id": "550e8400-e29b-41d4-a716-446655440000",
+      "short_transaction_id": "TXN-not-a-uuid",
+      "transaction_amount": "0.00",
+      "billing_amount": "0.01",
+      "transaction_fee": "-0.01",
+      "card_available_balance": "12345678901234567890.12345678"
+    }
+  },
+  {
+    "operation": "transactions.list",
+    "path": "/v1/issuing/transactions",
+    "body": {
+      "data": [
+        {
+          "transaction_id": "tx-1",
+          "original_transaction_id": "550e8400-e29b-41d4-a716-446655440000",
+          "short_transaction_id": "TXN-not-a-uuid",
+          "transaction_amount": "0.00",
+          "billing_amount": "0.01",
+          "transaction_fee": "-0.01",
+          "card_available_balance": "12345678901234567890.12345678"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "transactions.get",
+    "path": "/v1/issuing/transactions/tx-1",
+    "body": {
+      "transaction_id": "tx-1",
+      "original_transaction_id": "",
+      "short_transaction_id": "TXN-not-a-uuid",
+      "transaction_amount": "0.01",
+      "billing_amount": "-0.01",
+      "transaction_fee": "12345678901234567890.12345678",
+      "card_available_balance": "0.00"
+    }
+  },
+  {
+    "operation": "transactions.list",
+    "path": "/v1/issuing/transactions",
+    "body": {
+      "data": [
+        {
+          "transaction_id": "tx-1",
+          "original_transaction_id": "",
+          "short_transaction_id": "TXN-not-a-uuid",
+          "transaction_amount": "0.01",
+          "billing_amount": "-0.01",
+          "transaction_fee": "12345678901234567890.12345678",
+          "card_available_balance": "0.00"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "transactions.get",
+    "path": "/v1/issuing/transactions/tx-1",
+    "body": {
+      "transaction_id": "tx-1",
+      "original_transaction_id": "550e8400-e29b-41d4-a716-446655440000",
+      "short_transaction_id": "TXN-not-a-uuid",
+      "transaction_amount": "-0.01",
+      "billing_amount": "12345678901234567890.12345678",
+      "transaction_fee": "0.00",
+      "card_available_balance": "0.01"
+    }
+  },
+  {
+    "operation": "transactions.list",
+    "path": "/v1/issuing/transactions",
+    "body": {
+      "data": [
+        {
+          "transaction_id": "tx-1",
+          "original_transaction_id": "550e8400-e29b-41d4-a716-446655440000",
+          "short_transaction_id": "TXN-not-a-uuid",
+          "transaction_amount": "-0.01",
+          "billing_amount": "12345678901234567890.12345678",
+          "transaction_fee": "0.00",
+          "card_available_balance": "0.01"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "transfers.get",
+    "path": "/v1/issuing/transfers/transfer-1",
+    "body": {
+      "transfer_id": "transfer-1",
+      "reference_id": "TRANSFER-not-a-uuid",
+      "creator_id": "",
+      "amount": "12345678901234567890.12345678",
+      "fee_amount": "0.00",
+      "transfer_status": "PENDING"
+    }
+  },
+  {
+    "operation": "transfers.get",
+    "path": "/v1/issuing/transfers/transfer-1",
+    "body": {
+      "transfer_id": "transfer-1",
+      "reference_id": "TRANSFER-not-a-uuid",
+      "creator_id": "550e8400-e29b-41d4-a716-446655440000",
+      "amount": "12345678901234567890.12345678",
+      "fee_amount": "0.00",
+      "transfer_status": "PENDING"
+    }
+  },
+  {
+    "operation": "transfers.get",
+    "path": "/v1/issuing/transfers/transfer-1",
+    "body": {
+      "transfer_id": "transfer-1",
+      "reference_id": "TRANSFER-not-a-uuid",
+      "creator_id": "",
+      "amount": "12345678901234567890.12345678",
+      "fee_amount": "0.00",
+      "transfer_status": "FAILED"
+    }
+  },
+  {
+    "operation": "transfers.get",
+    "path": "/v1/issuing/transfers/transfer-1",
+    "body": {
+      "transfer_id": "transfer-1",
+      "reference_id": "TRANSFER-not-a-uuid",
+      "creator_id": "550e8400-e29b-41d4-a716-446655440000",
+      "amount": "12345678901234567890.12345678",
+      "fee_amount": "0.00",
+      "transfer_status": "FAILED"
+    }
+  },
+  {
+    "operation": "transfers.get",
+    "path": "/v1/issuing/transfers/transfer-1",
+    "body": {
+      "transfer_id": "transfer-1",
+      "reference_id": "TRANSFER-not-a-uuid",
+      "creator_id": "",
+      "amount": "12345678901234567890.12345678",
+      "fee_amount": "0.00",
+      "transfer_status": "COMPLETED"
+    }
+  },
+  {
+    "operation": "transfers.get",
+    "path": "/v1/issuing/transfers/transfer-1",
+    "body": {
+      "transfer_id": "transfer-1",
+      "reference_id": "TRANSFER-not-a-uuid",
+      "creator_id": "550e8400-e29b-41d4-a716-446655440000",
+      "amount": "12345678901234567890.12345678",
+      "fee_amount": "0.00",
+      "transfer_status": "COMPLETED"
+    }
+  }
+]

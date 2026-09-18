@@ -90,6 +90,27 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
 	}
 
+	// Frozen account summaries/details and issuing money: full CLI JSON output.
+	moneyRaw, err := os.ReadFile("testdata/account-money.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var moneyCases []struct {
+		Operation string          `json:"operation"`
+		Path      string          `json:"path"`
+		Body      json.RawMessage `json:"body"`
+	}
+	if err := json.Unmarshal(moneyRaw, &moneyCases); err != nil {
+		t.Fatal(err)
+	}
+	moneyCommands := map[string][]string{"accounts.list": {"account", "list"}, "accounts.get": {"account", "get", "account-1"}, "transactions.get": {"issuing", "transaction", "get", "tx-1"}, "transactions.list": {"issuing", "transaction", "list"}, "transfers.get": {"issuing", "transfer", "get", "transfer-1"}}
+	for _, fixture := range moneyCases {
+		args, ok := moneyCommands[fixture.Operation]
+		if !ok {
+			t.Fatal(fixture.Operation)
+		}
+		cases = append(cases, contractCase{args, fixture.Path, `null`, string(fixture.Body)})
+	}
 	// D044/D094: detail-only status; missing detail is legacy robustness.
 	for _, status := range []string{"UNKNOWN", "UNSETTLED", "SETTLED", "NOT_APPLICABLE", ""} {
 		body := `{"transaction_id":"tx-1"}`
