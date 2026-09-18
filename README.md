@@ -1,6 +1,6 @@
 # uqpay-cli
 
-> SDK/CLI **4.0.0** was released on **2026-09-18**. Review [contract migration guidance](CONTRACT_ALIGNMENT.md) before upgrading.
+> SDK/CLI **3.1.0** is being prepared as a version-number correction of 4.0.0. Review [contract migration guidance](CONTRACT_ALIGNMENT.md) before upgrading. It is not yet published.
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
