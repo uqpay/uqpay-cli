@@ -164,6 +164,17 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		}
 		cases = append(cases, contractCase{args, fixture.Path, want, string(fixture.Body)})
 	}
+	depositRaw, err := os.ReadFile("testdata/deposit-contract.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var depositCases []struct{ Body json.RawMessage }
+	if err := json.Unmarshal(depositRaw, &depositCases); err != nil {
+		t.Fatal(err)
+	}
+	for _, fixture := range depositCases {
+		cases = append(cases, contractCase{[]string{"banking", "deposit", "get", "deposit-1"}, "/v1/deposit/deposit-1", `null`, string(fixture.Body)})
+	}
 	// D044/D094: detail-only status; missing detail is legacy robustness.
 	for _, status := range []string{"UNKNOWN", "UNSETTLED", "SETTLED", "NOT_APPLICABLE", ""} {
 		body := `{"transaction_id":"tx-1"}`
