@@ -90,6 +90,15 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 		{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, `{"transaction_id":"tx-1","transaction_amount":"123456789.01","settlement_status":"SETTLED"}`},
 	}
 
+	// D044/D094: detail-only status; missing detail is legacy robustness.
+	for _, status := range []string{"UNKNOWN", "UNSETTLED", "SETTLED", "NOT_APPLICABLE", ""} {
+		body := `{"transaction_id":"tx-1"}`
+		if status != "" {
+			body = `{"transaction_id":"tx-1","settlement_status":"` + status + `"}`
+		}
+		cases = append(cases, contractCase{[]string{"issuing", "transaction", "get", "tx-1"}, "/v1/issuing/transactions/tx-1", `null`, body})
+	}
+	cases = append(cases, contractCase{[]string{"issuing", "transaction", "list"}, "/v1/issuing/transactions", `null`, `{"data":[{"transaction_id":"tx-1"}],"total_pages":1,"total_items":1}`})
 	// RFI list/detail and PIN order fixtures are shared across the five clients.
 	fixtureBytes, err := os.ReadFile("testdata/rfi-orders.json")
 	if err != nil {
