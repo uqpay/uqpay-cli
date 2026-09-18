@@ -5,6 +5,14 @@ All notable changes to `@uqpay/cli` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - Unreleased
+
+### Changed
+
+- Prepare the 4.0.0 feature set under the 3.x version line as a one-time version-number correction. No API behavior is reverted to 3.0.0.
+- Retain the PIN, RFI, simulated-deposit and response-model migration requirements described in [migration guidance](CONTRACT_ALIGNMENT.md). This version-number correction does not imply backward compatibility with 3.0.0.
+- Preserve the published 4.0.0 artifacts and release history.
+
 ## [4.0.0] - 2026-09-18
 
 ### Breaking

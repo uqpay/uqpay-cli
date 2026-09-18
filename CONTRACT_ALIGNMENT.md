@@ -1,6 +1,6 @@
 # API contract alignment
 
-Compatibility cohort: **4.0.0**, released on **2026-09-18**.
+Compatibility cohort: **3.1.0 (unreleased)**. This release preserves the 4.0.0 API behavior under the 3.x version line. It does not restore the 3.0.0 API contract; the migration requirements below still apply.
 
 Contract reference: [OpenAPI revision 1feb1d2](https://github.com/uqpay/uqpay-docs/tree/1feb1d26d032c53b79ab44a7d48e88c9a91d397d/docs).
 
