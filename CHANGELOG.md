@@ -5,7 +5,7 @@ All notable changes to `@uqpay/cli` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.0.0] - Unreleased
+## [4.0.0] - 2026-09-18
 
 ### Breaking
 
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Align KYC, beneficiary checks, card art, acquiring GET headers and Webhook fields
   within the approved frozen scope. Later capture/CARD-beneficiary contracts are excluded.
-- Preserve runtime support floors. This version has not been published.
+- Preserve runtime support floors.
 
 ## [3.0.0]
 
