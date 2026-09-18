@@ -1,0 +1,1229 @@
+[
+  {
+    "operation": "payout",
+    "name": "0:",
+    "path": "/v1/payouts/po-1",
+    "method": "GET",
+    "body": {
+      "payer": {
+        "payer_id": "0",
+        "identification_type": ""
+      }
+    }
+  },
+  {
+    "operation": "payout",
+    "name": "0:PASSPORT",
+    "path": "/v1/payouts/po-1",
+    "method": "GET",
+    "body": {
+      "payer": {
+        "payer_id": "0",
+        "identification_type": "PASSPORT"
+      }
+    }
+  },
+  {
+    "operation": "payout",
+    "name": "0:NRIC",
+    "path": "/v1/payouts/po-1",
+    "method": "GET",
+    "body": {
+      "payer": {
+        "payer_id": "0",
+        "identification_type": "NRIC"
+      }
+    }
+  },
+  {
+    "operation": "payout",
+    "name": "550e8400-e29b-41d4-a716-446655440000:",
+    "path": "/v1/payouts/po-1",
+    "method": "GET",
+    "body": {
+      "payer": {
+        "payer_id": "550e8400-e29b-41d4-a716-446655440000",
+        "identification_type": ""
+      }
+    }
+  },
+  {
+    "operation": "payout",
+    "name": "550e8400-e29b-41d4-a716-446655440000:PASSPORT",
+    "path": "/v1/payouts/po-1",
+    "method": "GET",
+    "body": {
+      "payer": {
+        "payer_id": "550e8400-e29b-41d4-a716-446655440000",
+        "identification_type": "PASSPORT"
+      }
+    }
+  },
+  {
+    "operation": "payout",
+    "name": "550e8400-e29b-41d4-a716-446655440000:NRIC",
+    "path": "/v1/payouts/po-1",
+    "method": "GET",
+    "body": {
+      "payer": {
+        "payer_id": "550e8400-e29b-41d4-a716-446655440000",
+        "identification_type": "NRIC"
+      }
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:APPLE_PAY_CONTACTLESS",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "APPLE_PAY_CONTACTLESS",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:APPLE_PAY_ECOM",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "APPLE_PAY_ECOM",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:GOOGLE_PAY_CONTACTLESS",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "GOOGLE_PAY_CONTACTLESS",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:GOOGLE_PAY_ECOM",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "GOOGLE_PAY_ECOM",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:SAMSUNG_PAY_CONTACTLESS",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "SAMSUNG_PAY_CONTACTLESS",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:SAMSUNG_PAY_ECOM",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "SAMSUNG_PAY_ECOM",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:OTHER",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "OTHER",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "wallet:FUTURE_WALLET",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1",
+      "wallet_type": "FUTURE_WALLET",
+      "merchant_data": {}
+    }
+  },
+  {
+    "operation": "transaction",
+    "name": "optional-absent",
+    "path": "/v1/issuing/transactions/tx-1",
+    "method": "GET",
+    "body": {
+      "transaction_id": "tx-1"
+    }
+  },
+  {
+    "operation": "authorization",
+    "name": "money-0",
+    "path": "/v1/simulation/issuing/authorization",
+    "method": "POST",
+    "body": {
+      "transaction_amount": "12345678901234567890.12",
+      "billing_amount": "0.00",
+      "card_available_balance": "-0.01"
+    },
+    "request": {
+      "card_id": "card-1",
+      "transaction_amount": 1.25,
+      "transaction_currency": "SGD",
+      "merchant_name": "Test",
+      "merchant_category_code": "5999"
+    }
+  },
+  {
+    "operation": "authorization",
+    "name": "money-1",
+    "path": "/v1/simulation/issuing/authorization",
+    "method": "POST",
+    "body": {
+      "transaction_amount": "0.00",
+      "billing_amount": "-0.01",
+      "card_available_balance": "12345678901234567890.12"
+    },
+    "request": {
+      "card_id": "card-1",
+      "transaction_amount": 1.25,
+      "transaction_currency": "SGD",
+      "merchant_name": "Test",
+      "merchant_category_code": "5999"
+    }
+  },
+  {
+    "operation": "authorization",
+    "name": "money-2",
+    "path": "/v1/simulation/issuing/authorization",
+    "method": "POST",
+    "body": {
+      "transaction_amount": "-0.01",
+      "billing_amount": "12345678901234567890.12",
+      "card_available_balance": "0.00"
+    },
+    "request": {
+      "card_id": "card-1",
+      "transaction_amount": 1.25,
+      "transaction_currency": "SGD",
+      "merchant_name": "Test",
+      "merchant_category_code": "5999"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:aba",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "aba",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:aba",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "aba",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:aba",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "aba",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:bank_code",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "bank_code",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:bank_code",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "bank_code",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:bank_code",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "bank_code",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:sort_code",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "sort_code",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:sort_code",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "sort_code",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:sort_code",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "sort_code",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:bsb_code",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "bsb_code",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:bsb_code",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "bsb_code",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:bsb_code",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "bsb_code",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:ifsc",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "ifsc",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:ifsc",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "ifsc",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:ifsc",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "ifsc",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:cnaps_number",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "cnaps_number",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:cnaps_number",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "cnaps_number",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:cnaps_number",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "cnaps_number",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "bank.get",
+    "name": "routing:",
+    "path": "/v2/payment/bankaccount/ba-1",
+    "method": "GET",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    }
+  },
+  {
+    "operation": "bank.list",
+    "name": "routing:",
+    "path": "/v2/payment/bankaccount",
+    "method": "GET",
+    "body": {
+      "data": [
+        {
+          "id": "ba-1",
+          "account_number": "00012345",
+          "account_name": "Test Company",
+          "bank_name": "Test",
+          "swift_code": "DBSSSGSG",
+          "bank_country_code": "SG",
+          "bank_address": "1 Test Street",
+          "currency": "SGD",
+          "bank_code_type": "",
+          "bank_code_value": "000123",
+          "bank_branch_code": "00001",
+          "account_status": "Valid"
+        }
+      ],
+      "total_pages": 1,
+      "total_items": 1
+    }
+  },
+  {
+    "operation": "bank.create",
+    "name": "routing:",
+    "path": "/v2/payment/bankaccount/create",
+    "method": "POST",
+    "body": {
+      "id": "ba-1",
+      "account_number": "00012345",
+      "account_name": "Test Company",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD",
+      "bank_code_type": "",
+      "bank_code_value": "000123",
+      "bank_branch_code": "00001",
+      "account_status": "Valid"
+    },
+    "request": {
+      "account_number": "00012345",
+      "bank_name": "Test",
+      "swift_code": "DBSSSGSG",
+      "bank_country_code": "SG",
+      "bank_address": "1 Test Street",
+      "currency": "SGD"
+    }
+  },
+  {
+    "operation": "intent.create",
+    "name": "missing",
+    "path": "/v2/payment_intents/create",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1"
+    },
+    "request": {
+      "amount": "1.25",
+      "currency": "SGD",
+      "merchant_order_id": "offline-order",
+      "description": "test",
+      "return_url": "https://example.test/return"
+    }
+  },
+  {
+    "operation": "intent.confirm",
+    "name": "missing",
+    "path": "/v2/payment_intents/pi-1/confirm",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1"
+    },
+    "request": {}
+  },
+  {
+    "operation": "intent.get",
+    "name": "missing",
+    "path": "/v2/payment_intents/pi-1",
+    "method": "GET",
+    "body": {
+      "payment_intent_id": "pi-1"
+    }
+  },
+  {
+    "operation": "intent.create",
+    "name": "null",
+    "path": "/v2/payment_intents/create",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "",
+      "complete_time": "",
+      "metadata": null,
+      "latest_payment_attempt": null,
+      "next_action": null
+    },
+    "request": {
+      "amount": "1.25",
+      "currency": "SGD",
+      "merchant_order_id": "offline-order",
+      "description": "test",
+      "return_url": "https://example.test/return"
+    }
+  },
+  {
+    "operation": "intent.confirm",
+    "name": "null",
+    "path": "/v2/payment_intents/pi-1/confirm",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "",
+      "complete_time": "",
+      "metadata": null,
+      "latest_payment_attempt": null,
+      "next_action": null
+    },
+    "request": {}
+  },
+  {
+    "operation": "intent.get",
+    "name": "null",
+    "path": "/v2/payment_intents/pi-1",
+    "method": "GET",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "",
+      "complete_time": "",
+      "metadata": null,
+      "latest_payment_attempt": null,
+      "next_action": null
+    }
+  },
+  {
+    "operation": "intent.create",
+    "name": "empty",
+    "path": "/v2/payment_intents/create",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "",
+      "complete_time": "",
+      "metadata": {},
+      "latest_payment_attempt": {},
+      "next_action": {
+        "type": "redirect_to_url",
+        "redirect_to_url": {
+          "url": "https://example.test/auth",
+          "return_url": ""
+        }
+      }
+    },
+    "request": {
+      "amount": "1.25",
+      "currency": "SGD",
+      "merchant_order_id": "offline-order",
+      "description": "test",
+      "return_url": "https://example.test/return"
+    }
+  },
+  {
+    "operation": "intent.confirm",
+    "name": "empty",
+    "path": "/v2/payment_intents/pi-1/confirm",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "",
+      "complete_time": "",
+      "metadata": {},
+      "latest_payment_attempt": {},
+      "next_action": {
+        "type": "redirect_to_url",
+        "redirect_to_url": {
+          "url": "https://example.test/auth",
+          "return_url": ""
+        }
+      }
+    },
+    "request": {}
+  },
+  {
+    "operation": "intent.get",
+    "name": "empty",
+    "path": "/v2/payment_intents/pi-1",
+    "method": "GET",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "",
+      "complete_time": "",
+      "metadata": {},
+      "latest_payment_attempt": {},
+      "next_action": {
+        "type": "redirect_to_url",
+        "redirect_to_url": {
+          "url": "https://example.test/auth",
+          "return_url": ""
+        }
+      }
+    }
+  },
+  {
+    "operation": "intent.create",
+    "name": "populated",
+    "path": "/v2/payment_intents/create",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "2026-09-17T00:00:00Z",
+      "complete_time": "2026-09-17T00:01:00Z",
+      "metadata": {
+        "reference": "0001"
+      },
+      "latest_payment_attempt": {
+        "attempt_id": "pa-1"
+      },
+      "next_action": {
+        "type": "redirect_to_url",
+        "redirect_to_url": {
+          "url": "https://example.test/auth",
+          "return_url": "https://example.test/return"
+        }
+      }
+    },
+    "request": {
+      "amount": "1.25",
+      "currency": "SGD",
+      "merchant_order_id": "offline-order",
+      "description": "test",
+      "return_url": "https://example.test/return"
+    }
+  },
+  {
+    "operation": "intent.confirm",
+    "name": "populated",
+    "path": "/v2/payment_intents/pi-1/confirm",
+    "method": "POST",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "2026-09-17T00:00:00Z",
+      "complete_time": "2026-09-17T00:01:00Z",
+      "metadata": {
+        "reference": "0001"
+      },
+      "latest_payment_attempt": {
+        "attempt_id": "pa-1"
+      },
+      "next_action": {
+        "type": "redirect_to_url",
+        "redirect_to_url": {
+          "url": "https://example.test/auth",
+          "return_url": "https://example.test/return"
+        }
+      }
+    },
+    "request": {}
+  },
+  {
+    "operation": "intent.get",
+    "name": "populated",
+    "path": "/v2/payment_intents/pi-1",
+    "method": "GET",
+    "body": {
+      "payment_intent_id": "pi-1",
+      "cancel_time": "2026-09-17T00:00:00Z",
+      "complete_time": "2026-09-17T00:01:00Z",
+      "metadata": {
+        "reference": "0001"
+      },
+      "latest_payment_attempt": {
+        "attempt_id": "pa-1"
+      },
+      "next_action": {
+        "type": "redirect_to_url",
+        "redirect_to_url": {
+          "url": "https://example.test/auth",
+          "return_url": "https://example.test/return"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:Y",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": "Y"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:A",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": "A"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:N",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": "N"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:U",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": "U"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:R",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": "R"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:C",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": "C"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "3ds:",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "authentication_data": {
+        "three_ds": {
+          "three_ds_authentication_status": ""
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "grabpay:ios",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "grabpay",
+        "grabpay": {
+          "flow": "qrcode",
+          "os_type": "ios"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "grabpay:android",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "grabpay",
+        "grabpay": {
+          "flow": "qrcode",
+          "os_type": "android"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "grabpay:",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "grabpay",
+        "grabpay": {
+          "flow": "qrcode",
+          "os_type": ""
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "tng:ios",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "tng",
+        "tng": {
+          "flow": "qrcode",
+          "os_type": "ios"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "tng:android",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "tng",
+        "tng": {
+          "flow": "qrcode",
+          "os_type": "android"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "tng:",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "tng",
+        "tng": {
+          "flow": "qrcode",
+          "os_type": ""
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "wechatpay:ios",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "wechatpay",
+        "wechatpay": {
+          "flow": "qrcode",
+          "os_type": "ios"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "wechatpay:android",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "wechatpay",
+        "wechatpay": {
+          "flow": "qrcode",
+          "os_type": "android"
+        }
+      }
+    }
+  },
+  {
+    "operation": "attempt",
+    "name": "wechatpay:",
+    "path": "/v2/payment/payment_attempts/pa-1",
+    "method": "GET",
+    "body": {
+      "attempt_id": "pa-1",
+      "payment_method": {
+        "type": "wechatpay",
+        "wechatpay": {
+          "flow": "qrcode",
+          "os_type": ""
+        }
+      }
+    }
+  }
+]

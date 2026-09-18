@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -174,6 +175,42 @@ func TestAlignedContractWireAndOutput(t *testing.T) {
 	}
 	for _, fixture := range depositCases {
 		cases = append(cases, contractCase{[]string{"banking", "deposit", "get", "deposit-1"}, "/v1/deposit/deposit-1", `null`, string(fixture.Body)})
+	}
+	remainingRaw, err := os.ReadFile("testdata/remaining-responses.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var remainingCases []struct {
+		Operation, Path, Method string
+		Request                 map[string]interface{}
+		Body                    json.RawMessage
+	}
+	if err := json.Unmarshal(remainingRaw, &remainingCases); err != nil {
+		t.Fatal(err)
+	}
+	remainingCommands := map[string][]string{
+		"payout": {"payout", "get", "po-1"}, "transaction": {"issuing", "transaction", "get", "tx-1"}, "authorization": {"simulate", "authorization"},
+		"bank.get": {"payment", "bank-account", "get", "ba-1"}, "bank.list": {"payment", "bank-account", "list"}, "bank.create": {"payment", "bank-account", "create"},
+		"intent.get": {"payment", "intent", "get", "pi-1"}, "intent.create": {"payment", "intent", "create"}, "intent.confirm": {"payment", "intent", "confirm", "pi-1"}, "attempt": {"payment", "attempt", "get", "pa-1"},
+	}
+	for _, fixture := range remainingCases {
+		args, ok := remainingCommands[fixture.Operation]
+		if !ok {
+			t.Fatal(fixture.Operation)
+		}
+		args = append([]string{}, args...)
+		want := `null`
+		if fixture.Method == "POST" {
+			for key, value := range fixture.Request {
+				args = append(args, "-d", key+"="+fmt.Sprint(value))
+			}
+			raw, err := json.Marshal(fixture.Request)
+			if err != nil {
+				t.Fatal(err)
+			}
+			want = string(raw)
+		}
+		cases = append(cases, contractCase{args, fixture.Path, want, string(fixture.Body)})
 	}
 	// D044/D094: detail-only status; missing detail is legacy robustness.
 	for _, status := range []string{"UNKNOWN", "UNSETTLED", "SETTLED", "NOT_APPLICABLE", ""} {
