@@ -1,0 +1,111 @@
+name: Verify only
+
+# Branch pushes validate before a PR exists. No tag trigger or publishing jobs.
+on:
+  push:
+    branches:
+      - 'marshall/api-delivery/**'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      release_mode:
+        type: boolean
+        default: false
+      release_tag:
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+env:
+  RELEASE_TAG: ${{ inputs.release_tag }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: ${{ inputs.release_mode }}
+          ref: ${{ inputs.release_mode && inputs.release_tag || github.sha }}
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Verify release tag and version
+        if: inputs.release_mode
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "release tag is not strict SemVer: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          VERSION=$(node -p "require('./package.json').version")
+          test "$RELEASE_TAG" = "v$VERSION"
+
+      - name: Verify tag commit is on main
+        if: inputs.release_mode
+        run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          TAG_SHA=$(git rev-list -n 1 "$RELEASE_TAG")
+          test "$(git rev-parse HEAD)" = "$TAG_SHA"
+          git merge-base --is-ancestor "$TAG_SHA" origin/main
+
+      - name: Run full test suite
+        run: go test ./...
+
+      - name: Run static checks
+        run: go vet ./...
+
+      - name: Verify GoReleaser configuration
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: check
+
+      - name: Build CLI
+        run: go build ./...
+
+      - name: Dry-run npm package
+        run: npm pack --dry-run --json
+
+      - name: Build snapshot binary artifacts
+        if: matrix.node-version == '22' && !inputs.release_mode
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: release --snapshot --clean
+
+      - name: Verify six snapshot archives
+        if: matrix.node-version == '22' && !inputs.release_mode
+        run: |
+          COUNT=$(find dist -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) | wc -l | tr -d ' ')
+          test "$COUNT" = "6"
+
+      - name: Verify artifact version
+        if: inputs.release_mode
+        run: |
+          VERSION="${RELEASE_TAG#v}"
+          mkdir -p .release-check release-artifacts
+          go build -ldflags "-X github.com/uqpay/uqpay-cli/internal/build.Version=$VERSION -X github.com/uqpay/uqpay-cli/internal/build.Date=ci" -o .release-check/uqpay .
+          .release-check/uqpay --version | grep -F "$VERSION"
+          npm pack --pack-destination release-artifacts --json > release-artifacts/pack.json
+          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('release-artifacts/pack.json'))[0]; const v=require('./package.json').version; if(p.version!==v) throw new Error('packed version '+p.version+' != '+v)"
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.node-version == '22' && inputs.release_mode
+        with:
+          name: npm-package
+          path: release-artifacts/*.tgz
+          if-no-files-found: error
