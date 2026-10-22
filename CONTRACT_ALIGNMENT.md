@@ -19,6 +19,10 @@ Targeted regressions exercise request method/path, serialization, response decod
 
 Use `uqpay banking payout validate --beneficiary-id <id> --currency USD --amount 6.00 --fee-paid-by OURS` (or the `payout validate` shortcut). Use `--on-behalf-of` when appropriate. Beneficiary list accepts `--payment-method`; payment-method discovery accepts `--entity-type`. Capture `-d amount_to_capture=6.00` now sends the exact string `"6.00"`; `-d final_capture=true` sends a boolean. The SDK does not turn a validation success into an automatic payout. Missing required flags, unknown commands and flag parsing errors are printed once on stderr with exit code 4; API errors keep their existing structured output.
 
+### Cross-client contract details
+
+`account create-sub --idempotency-key <lowercase-uuid>` sends an explicit key. Reuse the same key and request body when retrying the same creation; use a fresh key for each new sub-account. Omitting the flag preserves automatic key generation for each invocation. Explicit empty, uppercase or noncanonical UUID values are rejected before a request. Card assignment supports `-d metadata.card_sku_code=<12-character-code>` for Personal Visa; other products do not require this field merely because it is available.
+
 ## Published 3.1.0 baseline
 
 Compatibility cohort: **3.1.0**. This release preserves the 4.0.0 API behavior under the 3.x version line. It does not restore the 3.0.0 API contract; the migration requirements below still apply.

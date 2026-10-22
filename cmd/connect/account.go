@@ -2,8 +2,10 @@ package connect
 
 import (
 	"context"
+	"fmt"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	"github.com/uqpay/uqpay-cli/internal/client"
 	"github.com/uqpay/uqpay-cli/internal/cmdutil"
@@ -413,10 +415,20 @@ Examples:
 
 func newAccountCreateSubCmd() *cobra.Command {
 	var data []string
+	var idempotencyKey string
 	cmd := &cobra.Command{
 		Use:   "create-sub",
 		Short: "Create a sub-account under a connected account",
-		Long:  accountCreateSubHelp,
+		Long:  accountCreateSubHelp + "\n\nFor retries, reuse --idempotency-key with the same request body. Use a new lowercase UUID for each new sub-account. If omitted, a key is generated automatically for this invocation.",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if cmd.Flags().Changed("idempotency-key") {
+				key, err := uuid.Parse(idempotencyKey)
+				if err != nil || key.String() != idempotencyKey {
+					return fmt.Errorf("--idempotency-key must be a lowercase UUID")
+				}
+			}
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
 			if err != nil {
@@ -429,7 +441,7 @@ func newAccountCreateSubCmd() *cobra.Command {
 				return err
 			}
 			c := client.New(cfg)
-			resp, err := c.Post(context.Background(), "/v1/accounts/create_accounts", body)
+			resp, err := c.PostH(context.Background(), "/v1/accounts/create_accounts", body, map[string]string{"x-idempotency-key": idempotencyKey})
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
@@ -438,6 +450,7 @@ func newAccountCreateSubCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "Key=value pairs (repeatable), supports dot notation for nested fields")
+	cmd.Flags().StringVar(&idempotencyKey, "idempotency-key", "", "Lowercase UUID to reuse for retries of the same sub-account creation")
 	return cmd
 }
 

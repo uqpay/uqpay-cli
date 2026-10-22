@@ -136,6 +136,7 @@ Parameters:
 
   Conditional:
     cardholder_id   string   Business Visa may omit to use the company authorized person; required for Personal Visa
+    metadata.card_sku_code string Exactly 12 characters; required for Personal Visa. Omit metadata for other products.
 
 Examples:
   uqpay issuing card assign \
