@@ -17,7 +17,7 @@ Targeted regressions exercise request method/path, serialization, response decod
 
 ### Command migration
 
-Use `uqpay banking payout validate --beneficiary-id <id> --currency USD --amount 6.00 --fee-paid-by OURS` (or the `payout validate` shortcut). Use `--on-behalf-of` when appropriate. Beneficiary list accepts `--payment-method`; payment-method discovery accepts `--entity-type`. Capture `-d amount_to_capture=6.00` now sends the exact string `"6.00"`; `-d final_capture=true` sends a boolean. The SDK does not turn a validation success into an automatic payout.
+Use `uqpay banking payout validate --beneficiary-id <id> --currency USD --amount 6.00 --fee-paid-by OURS` (or the `payout validate` shortcut). Use `--on-behalf-of` when appropriate. Beneficiary list accepts `--payment-method`; payment-method discovery accepts `--entity-type`. Capture `-d amount_to_capture=6.00` now sends the exact string `"6.00"`; `-d final_capture=true` sends a boolean. The SDK does not turn a validation success into an automatic payout. Missing required flags, unknown commands and flag parsing errors are printed once on stderr with exit code 4; API errors keep their existing structured output.
 
 ## Published 3.1.0 baseline
 
