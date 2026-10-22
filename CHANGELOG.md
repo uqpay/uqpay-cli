@@ -3,7 +3,25 @@
 All notable changes to `@uqpay/cli` are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and releases follow the UQPAY custom `3.MINOR.PATCH` policy: MAJOR stays 3,
+MINOR covers public additions and noncompatible changes, and PATCH covers
+compatible fixes. MINOR upgrades can require migration.
+
+## [3.2.0]
+
+### Added
+
+- Add payout validation, CARD beneficiary fields and expiry, beneficiary payment-method filtering, and payment-method entity filtering.
+- Support cardholder proof-of-address and identity verification documents, supporting-only updates, Business Visa default cardholders, and Personal Visa assignment metadata.
+- Expose acquiring authorization/capture options, capture references, authorization balances and new payment intent statuses.
+- Allow explicit sub-account creation idempotency keys while retaining automatic keys when omitted.
+
+### Changed
+
+- Align with English v1.6 contract `16d84adb1a6275004c5e223ddcc18d64feedfc8e`; preserve optional company supporting documents.
+- Preserve capture amounts as exact strings and `final_capture` as a boolean. Review scripts that relied on numeric capture request values or silent command errors: missing flags, unknown commands and invalid flags now print one stderr error and exit with code 4.
+- Retain existing command/flag names and runtime requirements relative to CLI v3.1.0 (`682795c8a5b6d75bba3b42268faca127622894cb`). Dependencies are unchanged.
+- See [3.2.0 contract and command migration](CONTRACT_ALIGNMENT.md#320-contract-update) for request examples, server-authoritative eligibility and verification limits. Offline fixtures do not establish live deployment or completed financial operations.
 
 ## [3.1.0]
 
