@@ -2,8 +2,10 @@ package connect
 
 import (
 	"context"
+	"fmt"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	"github.com/uqpay/uqpay-cli/internal/client"
 	"github.com/uqpay/uqpay-cli/internal/cmdutil"
@@ -25,7 +27,7 @@ Parameters (COMPANY entity):
     business_details.legal_entity_name_english     string   Legal name in English
     business_details.incorporation_date            string   Incorporation date (YYYY-MM-DD)
     business_details.registration_number           string   Business registration number
-    business_details.business_structure             string   LIMITED_COMPANY | SOLE_TRADER | PARTNERSHIP | LISTED | OTHERS
+    business_details.business_structure             string   LIMITED_COMPANY | SOLE_PROPRIETOR | PARTNERSHIP | LISTED | INDIVIDUAL_MERCHANT | OTHERS
     business_details.merchant_category_code        string   MCC code (e.g. 7372)
     business_details.estimated_worker_count        string   BS001 (<50) | BS002 (50-100) | BS003 (100-500) | BS004 (>500)
     business_details.monthly_estimated_revenue.amount    string   TM001 (<$50K) | TM002 ($50K-$100K) | TM003 | TM004 | TM005
@@ -239,8 +241,9 @@ func newAccountCreateCmd() *cobra.Command {
 func newAccountAdditionalDocumentsCmd() *cobra.Command {
 	var country, businessCode string
 	cmd := &cobra.Command{
-		Use:   "additional-documents",
-		Short: "Get additional documents required for account verification",
+		Use:        "additional-documents",
+		Deprecated: "retained for existing integrations; do not use for new integrations",
+		Short:      "Get additional documents required for account verification",
 		Long: `Get the list of additional documents required for account verification.
 
 Flags:
@@ -412,10 +415,20 @@ Examples:
 
 func newAccountCreateSubCmd() *cobra.Command {
 	var data []string
+	var idempotencyKey string
 	cmd := &cobra.Command{
 		Use:   "create-sub",
 		Short: "Create a sub-account under a connected account",
-		Long:  accountCreateSubHelp,
+		Long:  accountCreateSubHelp + "\n\nFor retries, reuse --idempotency-key with the same request body. Use a new lowercase UUID for each new sub-account. If omitted, a key is generated automatically for this invocation.",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if cmd.Flags().Changed("idempotency-key") {
+				key, err := uuid.Parse(idempotencyKey)
+				if err != nil || key.String() != idempotencyKey {
+					return fmt.Errorf("--idempotency-key must be a lowercase UUID")
+				}
+			}
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
 			if err != nil {
@@ -428,7 +441,7 @@ func newAccountCreateSubCmd() *cobra.Command {
 				return err
 			}
 			c := client.New(cfg)
-			resp, err := c.Post(context.Background(), "/v1/accounts/create_accounts", body)
+			resp, err := c.PostH(context.Background(), "/v1/accounts/create_accounts", body, map[string]string{"x-idempotency-key": idempotencyKey})
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
@@ -437,6 +450,7 @@ func newAccountCreateSubCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "Key=value pairs (repeatable), supports dot notation for nested fields")
+	cmd.Flags().StringVar(&idempotencyKey, "idempotency-key", "", "Lowercase UUID to reuse for retries of the same sub-account creation")
 	return cmd
 }
 

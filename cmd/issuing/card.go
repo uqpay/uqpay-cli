@@ -19,10 +19,10 @@ const cardCreateHelp = `Create a new issuing card.
 Parameters:
   Required:
     card_currency                                           string   SGD | USD
-    cardholder_id                                          string   Cardholder UUID
     card_product_id                                        string   Card product ID
 
   Conditional:
+    cardholder_id                                          string   Omit for one-step issuance or Business Visa company authorized person
     card_limit                                             number   Required for BINs 527735/555071/555243 (>=0.01); optional for others
     auto_cancel_trigger                                    string   ON_AUTH | ON_CAPTURE — required when usage_type=ONE_TIME
 
@@ -130,10 +130,13 @@ const cardAssignHelp = `Assign an unassigned physical card to a cardholder.
 
 Parameters:
   Required:
-    cardholder_id   string   Cardholder ID
     card_number     string   Full card number (PAN) printed on the card
     card_currency   string   ISO 4217 currency code (e.g. SGD, USD)
     card_mode       string   SINGLE | SHARE
+
+  Conditional:
+    cardholder_id   string   Business Visa may omit to use the company authorized person; required for Personal Visa
+    metadata.card_sku_code string Exactly 12 characters; required for Personal Visa. Omit metadata for other products.
 
 Examples:
   uqpay issuing card assign \

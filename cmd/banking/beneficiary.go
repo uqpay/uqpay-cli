@@ -11,13 +11,18 @@ import (
 	"github.com/uqpay/uqpay-cli/internal/output"
 )
 
-const beneficiaryCreateHelp = `Create a new beneficiary.
+const beneficiaryCreateHelp = `For CARD, use bank_details.card_expiry (YYYY-MM), bank_details.account_holder,
+bank_details.account_number and bank_details.clearing_system=MASTERCARD SEND.
+Company CARD recipients require country, city and street_address in address;
+individual CARD recipients do not require an address or separate first/last names.
+
+Create a new beneficiary.
 
 Parameters:
-  Required (COMPANY entity):
+  Required (COMPANY bank recipient, LOCAL/SWIFT):
     entity_type                   string   COMPANY | INDIVIDUAL
     company_name                  string   Company name
-    payment_method                string   LOCAL | SWIFT
+    payment_method                string   LOCAL | SWIFT | CARD
     bank_details.bank_name        string   Name of the bank
     bank_details.bank_address     string   Address of the bank
     bank_details.bank_country_code string  Two-letter country code (ISO 3166-1 alpha-2)
@@ -31,11 +36,11 @@ Parameters:
     address.postal_code           string   Postal code
     address.state                 string   State or province
 
-  Required (INDIVIDUAL entity):
+  Required (INDIVIDUAL bank recipient, LOCAL/SWIFT):
     entity_type                   string   COMPANY | INDIVIDUAL
     first_name                    string   First name
     last_name                     string   Last name
-    payment_method                string   LOCAL | SWIFT
+    payment_method                string   LOCAL | SWIFT | CARD
     bank_details.bank_name        string   Name of the bank
     bank_details.bank_address     string   Address of the bank
     bank_details.bank_country_code string  Two-letter country code
@@ -85,7 +90,10 @@ Examples:
     -d address.postal_code=018982 \
     -d address.state=Singapore`
 
-const beneficiaryUpdateHelp = `Update an existing beneficiary.
+const beneficiaryUpdateHelp = `For CARD, submit the complete card beneficiary object, including bank_details.card_expiry.
+Entity type cannot be changed.
+
+Update an existing beneficiary.
 
 The beneficiary ID is returned in the response of "beneficiary create" or "beneficiary list".
 
@@ -94,7 +102,7 @@ Parameters (all optional — only include fields to update):
     company_name                       string   Company name
     first_name                         string   First name (INDIVIDUAL only)
     last_name                          string   Last name (INDIVIDUAL only)
-    payment_method                     string   LOCAL | SWIFT
+    payment_method                     string   LOCAL | SWIFT | CARD
     nickname                           string   Nickname
     email                              string   Email address
     bank_details.bank_name             string   Name of the bank
@@ -126,7 +134,11 @@ Parameters (all optional — only include fields to update):
 Examples:
   uqpay beneficiary update ben_xxx -d nickname="New Name"`
 
-const beneficiaryCheckHelp = `Check if a beneficiary bank account is valid.
+const beneficiaryCheckHelp = `Check whether a recipient is already saved.
+
+For CARD, provide account_number, bank_country_code, currency, entity_type and
+clearing_system=MASTERCARD SEND. No card_expiry is required. A match does not
+verify the card or its ability to receive funds.
 
 At least one non-empty account_number or iban is required.
 If both are supplied, account_number takes precedence.
@@ -136,14 +148,14 @@ and clearing_system are required. For SWIFT, use clearing_system=SWIFT.
 Parameters:
   Required:
     entity_type      string   COMPANY | INDIVIDUAL
-    payment_method   string   LOCAL | SWIFT
+    payment_method   string   LOCAL | SWIFT | CARD
     currency         string   ISO 4217 currency code
 
   Optional:
     first_name       string   First name (INDIVIDUAL only)
     last_name        string   Last name (INDIVIDUAL only)
     company_name     string   Company name (COMPANY only)
-    clearing_system  string   LOCAL | SWIFT | ACH | FAST | MEPS | GIRO | Fedwire | Faster Payments | RTGS | FPS | EFT | Interac e-Transfer | Bill Payment | CHAPS | Bank Transfer | NPP | BPAY
+    clearing_system  string   MASTERCARD SEND | LOCAL | SWIFT | ACH | FAST | MEPS | GIRO | Fedwire | Faster Payments | RTGS | FPS | EFT | Interac e-Transfer | Bill Payment | CHAPS | Bank Transfer | NPP | BPAY
     account_number   string   Bank account number (alternative to iban)
     iban             string   IBAN (alternative to account_number)
     bank_country_code string  Bank country; required depending on payment method and currency
@@ -174,7 +186,7 @@ func NewBeneficiaryCmd() *cobra.Command {
 }
 
 func newBeneficiaryListCmd() *cobra.Command {
-	var onBehalfOf, entityType, nickname, currency, companyName, pageSize, pageNum string
+	var onBehalfOf, entityType, nickname, currency, companyName, pageSize, pageNum, paymentMethod string
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List beneficiaries",
@@ -196,12 +208,13 @@ Flags:
 			}
 			c := client.New(cfg)
 			data, err := c.GetH(context.Background(), "/v1/beneficiaries", map[string]string{
-				"entity_type":  entityType,
-				"nickname":     nickname,
-				"currency":     currency,
-				"company_name": companyName,
-				"page_size":    pageSize,
-				"page_number":  pageNum,
+				"entity_type":    entityType,
+				"payment_method": paymentMethod,
+				"nickname":       nickname,
+				"currency":       currency,
+				"company_name":   companyName,
+				"page_size":      pageSize,
+				"page_number":    pageNum,
 			}, map[string]string{"x-on-behalf-of": onBehalfOf})
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
@@ -211,6 +224,7 @@ Flags:
 		},
 	}
 	cmd.Flags().StringVar(&entityType, "entity-type", "", "Filter by entity type: COMPANY | INDIVIDUAL")
+	cmd.Flags().StringVar(&paymentMethod, "payment-method", "", "Filter by payment method: LOCAL | SWIFT | CARD")
 	cmd.Flags().StringVar(&nickname, "nickname", "", "Filter by nickname")
 	cmd.Flags().StringVar(&currency, "currency", "", "Filter by currency (ISO 4217)")
 	cmd.Flags().StringVar(&companyName, "company-name", "", "Filter by company name")
@@ -385,7 +399,7 @@ func newBeneficiaryCheckCmd() *cobra.Command {
 }
 
 func newBeneficiaryPaymentMethodsCmd() *cobra.Command {
-	var currency, country string
+	var currency, country, entityType, onBehalfOf string
 	cmd := &cobra.Command{
 		Use:   "payment-methods",
 		Short: "List available payment methods for beneficiaries",
@@ -404,10 +418,11 @@ Examples:
 				return err
 			}
 			c := client.New(cfg)
-			data, err := c.Get(context.Background(), "/v1/beneficiaries/paymentmethods", map[string]string{
-				"currency": currency,
-				"country":  country,
-			})
+			data, err := c.GetH(context.Background(), "/v1/beneficiaries/paymentmethods", map[string]string{
+				"currency":    currency,
+				"country":     country,
+				"entity_type": entityType,
+			}, map[string]string{"x-on-behalf-of": onBehalfOf})
 			if err != nil {
 				cmdutil.WriteError(err, cfg.Output)
 				return err
@@ -417,5 +432,7 @@ Examples:
 	}
 	cmd.Flags().StringVar(&currency, "currency", "", "ISO 4217 currency code (required)")
 	cmd.Flags().StringVar(&country, "country", "", "Two-letter country code (required)")
+	cmd.Flags().StringVar(&entityType, "entity-type", "", "Recipient entity type: INDIVIDUAL | COMPANY")
+	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID to act on behalf of")
 	return cmd
 }

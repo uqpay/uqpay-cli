@@ -18,11 +18,11 @@ Parameters:
     currency          string   ISO 4217 source currency (e.g. USD)
     amount            string   Amount to send in source currency
     purpose_code      string   Purpose code (e.g. GOODS_PURCHASED, SALARY, INVOICE, etc.)
+
+  Optional:
     payout_reference  string   Bank reference shown in beneficiary's bank statement
     fee_paid_by       string   SHARED | OURS
     payout_date       string   Scheduled date (YYYY-MM-DD)
-
-  Optional:
     quote_id          string   Pre-created quote ID (from "conversion quote")
     payout_currency   string   ISO 4217 currency the beneficiary receives
     payout_amount     number   Amount the beneficiary receives in payout_currency
@@ -49,6 +49,7 @@ func NewPayoutCmd() *cobra.Command {
 		newPayoutListCmd(),
 		newPayoutGetCmd(),
 		newPayoutCreateCmd(),
+		newPayoutValidateCmd(),
 	)
 	return cmd
 }
@@ -160,5 +161,38 @@ func newPayoutCreateCmd() *cobra.Command {
 	}
 	cmd.Flags().StringArrayVarP(&data, "data", "d", nil, "Key=value pairs (repeatable), supports dot notation for nested fields")
 	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID to act on behalf of")
+	return cmd
+}
+
+func newPayoutValidateCmd() *cobra.Command {
+	var beneficiaryID, currency, amount, feePaidBy, onBehalfOf string
+	cmd := &cobra.Command{
+		Use: "validate", Short: "Check payout prerequisites without creating a payout",
+		Long: "Check a saved beneficiary, fees, balance and channel availability. This does not reserve funds or guarantee a later payout.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := cmdutil.LoadConfig()
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			c := client.New(cfg)
+			resp, err := c.GetH(context.Background(), "/v1/payouts/validation", map[string]string{
+				"beneficiary_id": beneficiaryID, "currency": currency, "amount": amount, "fee_paid_by": feePaidBy,
+			}, map[string]string{"x-on-behalf-of": onBehalfOf})
+			if err != nil {
+				cmdutil.WriteError(err, cfg.Output)
+				return err
+			}
+			return output.Print(os.Stdout, resp, cfg.Output)
+		},
+	}
+	cmd.Flags().StringVar(&beneficiaryID, "beneficiary-id", "", "Saved beneficiary ID (required)")
+	cmd.Flags().StringVar(&currency, "currency", "", "Payout currency (required)")
+	cmd.Flags().StringVar(&amount, "amount", "", "Payout amount as a decimal string (required)")
+	cmd.Flags().StringVar(&feePaidBy, "fee-paid-by", "", "Fee payer: OURS | SHARED (required)")
+	cmd.Flags().StringVar(&onBehalfOf, "on-behalf-of", "", "Sub-account ID to act on behalf of")
+	for _, name := range []string{"beneficiary-id", "currency", "amount", "fee-paid-by"} {
+		_ = cmd.MarkFlagRequired(name)
+	}
 	return cmd
 }
