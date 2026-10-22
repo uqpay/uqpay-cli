@@ -25,7 +25,7 @@ Parameters (COMPANY entity):
     business_details.legal_entity_name_english     string   Legal name in English
     business_details.incorporation_date            string   Incorporation date (YYYY-MM-DD)
     business_details.registration_number           string   Business registration number
-    business_details.business_structure             string   LIMITED_COMPANY | SOLE_TRADER | PARTNERSHIP | LISTED | OTHERS
+    business_details.business_structure             string   LIMITED_COMPANY | SOLE_PROPRIETOR | PARTNERSHIP | LISTED | INDIVIDUAL_MERCHANT | OTHERS
     business_details.merchant_category_code        string   MCC code (e.g. 7372)
     business_details.estimated_worker_count        string   BS001 (<50) | BS002 (50-100) | BS003 (100-500) | BS004 (>500)
     business_details.monthly_estimated_revenue.amount    string   TM001 (<$50K) | TM002 ($50K-$100K) | TM003 | TM004 | TM005
@@ -239,8 +239,9 @@ func newAccountCreateCmd() *cobra.Command {
 func newAccountAdditionalDocumentsCmd() *cobra.Command {
 	var country, businessCode string
 	cmd := &cobra.Command{
-		Use:   "additional-documents",
-		Short: "Get additional documents required for account verification",
+		Use:        "additional-documents",
+		Deprecated: "retained for existing integrations; do not use for new integrations",
+		Short:      "Get additional documents required for account verification",
 		Long: `Get the list of additional documents required for account verification.
 
 Flags:

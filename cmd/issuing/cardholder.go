@@ -13,6 +13,12 @@ import (
 
 const cardholderCreateHelp = `Create a new cardholder.
 
+Business Visa / Business Mastercard also require nationality, date_of_birth, gender,
+identity (type, number, front_file), and residential_address.
+Personal Visa also requires nationality, date_of_birth, identity, residential_address,
+and kyc_verification. Both product groups require address country, state, city,
+line1, line_en, and postal_code. Requirements are validated by the server.
+
 Parameters:
   Required:
     email                                string   Cardholder email
@@ -38,6 +44,10 @@ Parameters:
     identity.front_file                  string   base64 string or @filepath (required if identity provided)
     identity.back_file                   string   base64 string or @filepath (required if type=ID_CARD)
     identity.hand_file                   string   base64 string or @filepath, holding document
+    identity.proof_of_address            string   Base64 PDF/PNG/JPG/JPEG, max decoded 10 MiB
+    identity.proof_of_address_issue_date string   YYYY-MM-DD; required with new POA
+    identity.proof_of_address_issuing_country string ISO alpha-2; required with new POA
+    identity.identity_verification       string   Base64 KYC provider result file, max decoded 10 MiB
     kyc_verification.method              string   THIRD_PARTY | SUMSUB_REDIRECT (required if kyc_verification provided)
     kyc_verification.kyc_proof.provider  string   e.g. SUMSUB (required if method=THIRD_PARTY)
     kyc_verification.kyc_proof.reference_id string >=10 chars, globally unique (required if method=THIRD_PARTY)
@@ -45,22 +55,18 @@ Parameters:
     document                             string   base64 string or @filepath, max 2MB
 
 Examples:
+  # Business cardholder; file arguments are base64-encoded by the CLI:
   uqpay issuing cardholder create \
-    -d email=john@example.com \
-    -d first_name=John \
-    -d last_name=Doe \
-    -d country_code=GB \
-    -d phone_number=+441234567890
-
-  # Pass files directly — CLI reads and base64-encodes them automatically:
-  uqpay cardholder create \
-    -d email=john@example.com \
-    -d first_name=John \
-    -d last_name=Doe \
-    -d country_code=GB \
-    -d phone_number=+441234567890 \
-    -d identity.type=PASSPORT \
-    -d identity.number=AB123456 \
+    -d email=john@example.test \
+    -d first_name=John -d last_name=Doe \
+    -d country_code=SG -d phone_number=81234567 \
+    -d nationality=SG -d date_of_birth=1990-01-01 -d gender=MALE \
+    -d residential_address.country=SG \
+    -d residential_address.state=Singapore -d residential_address.city=Singapore \
+    -d "residential_address.line1=Example Street" \
+    -d "residential_address.line_en=Example Street, Singapore" \
+    -d residential_address.postal_code=138666 \
+    -d identity.type=PASSPORT -d identity.number=EXAMPLE \
     -d identity.front_file=@./passport.jpg`
 
 const cardholderUpdateHelp = `Update an existing cardholder.
@@ -81,11 +87,20 @@ Parameters (all optional):
     residential_address.line2            string   max 255 chars
     residential_address.line_en          string   max 255 chars
     residential_address.postal_code      string   max 16 chars
-    identity.type                        string   ID_CARD | PASSPORT (required if identity provided)
-    identity.number                      string   (required if identity provided)
-    identity.front_file                  string   base64 string or @filepath (required if identity provided)
+    identity.type                        string   ID_CARD | PASSPORT (optional for supporting-material-only updates)
+    identity.number                      string   (optional for supporting-material-only updates)
+    identity.front_file                  string   base64 string or @filepath (optional for supporting-material-only updates)
     identity.back_file                   string   base64 string or @filepath (required if type=ID_CARD)
     identity.hand_file                   string   base64 string or @filepath
+    identity.proof_of_address            string   Base64 PDF/PNG/JPG/JPEG, max decoded 10 MiB
+    identity.proof_of_address_issue_date string   YYYY-MM-DD; required with new POA
+    identity.proof_of_address_issuing_country string ISO alpha-2; required with new POA
+    identity.identity_verification       string   Base64 KYC provider result file, max decoded 10 MiB
+
+  Supporting materials may be updated without identity type, number or front_file.
+  Omitted, empty or null file values preserve saved files. POA must be issued within
+  12 months on first submission, or 6 months on resubmission following rejection.
+  identity_verification does not replace POA or kyc_verification.kyc_proof.
     kyc_verification.method              string   THIRD_PARTY | SUMSUB_REDIRECT (required if kyc_verification provided)
     kyc_verification.kyc_proof.provider  string   (required if method=THIRD_PARTY)
     kyc_verification.kyc_proof.reference_id string (required if method=THIRD_PARTY)

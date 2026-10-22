@@ -1,5 +1,26 @@
 # API contract alignment
 
+## Unreleased contract update
+
+This source update targets [English v1.6 contract `16d84adb`](https://github.com/uqpay/uqpay-docs/tree/16d84adb1a6275004c5e223ddcc18d64feedfc8e/docs), compared with the 3.1.0 contract `1feb1d26d032c53b79ab44a7d48e88c9a91d397d`. Package version metadata remains 3.1.0 for development; these changes are not a published 3.1.0 artifact. A future coordinated release requires a new MINOR version under the SDK version policy.
+
+- Banking: CARD beneficiaries and expiry, optional payment-method entity filtering, mixed validation rule objects, optional payout reference/fee/date, and `GET /v1/payouts/validation`. Validation checks a saved beneficiary and funds without reserving funds or guaranteeing later success. The target operation lists a Sandbox server; Production availability is unverified.
+- Issuing: cardholder supporting documents (`proof_of_address`, its issue date/country, and `identity_verification`), supporting-only updates, sparse response addresses, and omitted cardholder IDs for Business Visa default-holder issuance/assignment. Personal and other product requirements remain server-authoritative. One-step inline cardholder identity is not extended by the supporting-document contract.
+- Acquiring: top-level authorization type, card-present authorization/capture options, merchant capture references, `final_capture=true`, authorization balances/expiry, capture records and new payment intent statuses. Capture acceptance is not channel completion. Existing optional attempt `captured_amount` remains for source compatibility even though the target no longer returns it.
+- Account Center: optional company supporting documents are preserved. The deprecated additional-documents method remains for existing integrations; do not use it for new integrations.
+
+Length/date/enum constraints moved from descriptions into schema do not add client-side validators. Product eligibility, beneficiary rules, POA validity and account/channel availability remain server-authoritative. Ramp/Stablecoin Account and Treasury remain outside this SDK scope. The hidden deposit simulator remains as an existing compatibility entry point.
+
+### Verification boundary
+
+Targeted regressions exercise request method/path, serialization, response decoding and local webhook payloads with synthetic data. Tests and candidate-package consumers do not establish live API deployment, permissions, channel execution, webhook delivery or financial reconciliation. Live integration tests are skipped when disabled or missing credentials; a skipped test is not a passed business flow. Known historical integration tests outside this update still require review before being used as end-to-end acceptance evidence.
+
+### Command migration
+
+Use `uqpay banking payout validate --beneficiary-id <id> --currency USD --amount 6.00 --fee-paid-by OURS` (or the `payout validate` shortcut). Use `--on-behalf-of` when appropriate. Beneficiary list accepts `--payment-method`; payment-method discovery accepts `--entity-type`. Capture `-d amount_to_capture=6.00` now sends the exact string `"6.00"`; `-d final_capture=true` sends a boolean. The SDK does not turn a validation success into an automatic payout.
+
+## Published 3.1.0 baseline
+
 Compatibility cohort: **3.1.0**. This release preserves the 4.0.0 API behavior under the 3.x version line. It does not restore the 3.0.0 API contract; the migration requirements below still apply.
 
 Contract reference: [OpenAPI revision 1feb1d2](https://github.com/uqpay/uqpay-docs/tree/1feb1d26d032c53b79ab44a7d48e88c9a91d397d/docs).

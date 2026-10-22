@@ -22,7 +22,8 @@ Parameters:
     return_url          string   URL to redirect customer after payment
 
   Optional:
-    payment_method      object   Payment method details
+    authorization_type  string   authorization | pre_authorization (pre-authorization needs account/channel support)
+    payment_method      object   Payment method details; card_present supports authorization_type and auto_capture=false
     ip_address          string   Customer IPv4 or IPv6 address
     payment_orders      object   Purchase order details
     browser_info        object   Browser info for 3DS (required when payment_method.card is used)
@@ -42,6 +43,7 @@ The payment intent ID is returned in the response of "payment intent create".
 
 Parameters:
   Optional:
+    authorization_type string  authorization | pre_authorization
     payment_method   object   Payment method details to confirm with
     ip_address       string   Customer IPv4 or IPv6 address (required when payment_method.card is used)
     browser_info     object   Browser information for 3DS (required when payment_method.card is used)
@@ -79,7 +81,7 @@ func newPaymentIntentListCmd() *cobra.Command {
 		Long: `List payment intents.
 
 Flags:
-  --status        Filter by status: REQUIRES_PAYMENT_METHOD | REQUIRES_CUSTOMER_ACTION | REQUIRES_CAPTURE | PENDING | SUCCEEDED | CANCELLED | FAILED
+  --status        Filter by status: REQUIRES_PAYMENT_METHOD | REQUIRES_CUSTOMER_ACTION | REQUIRES_CAPTURE | PENDING | SUCCEEDED | CANCELLED | FAILED | PARTIALLY_CAPTURED | EXPIRED
   --start-time    Filter by created time start (ISO 8601, e.g. 2026-01-01T00:00:00Z)
   --end-time      Filter by created time end (ISO 8601)
   --page-size     Results per page (default 10)
@@ -113,7 +115,7 @@ Flags:
 			return output.Print(os.Stdout, data, cfg.Output)
 		},
 	}
-	cmd.Flags().StringVar(&status, "status", "", "Filter by status: REQUIRES_PAYMENT_METHOD | REQUIRES_CUSTOMER_ACTION | REQUIRES_CAPTURE | PENDING | SUCCEEDED | CANCELLED | FAILED")
+	cmd.Flags().StringVar(&status, "status", "", "Filter by status: REQUIRES_PAYMENT_METHOD | REQUIRES_CUSTOMER_ACTION | REQUIRES_CAPTURE | PENDING | SUCCEEDED | CANCELLED | FAILED | PARTIALLY_CAPTURED | EXPIRED")
 	cmd.Flags().StringVar(&startTime, "start-time", "", "Filter start time (ISO 8601)")
 	cmd.Flags().StringVar(&endTime, "end-time", "", "Filter end time (ISO 8601)")
 	cmd.Flags().StringVar(&pageSize, "page-size", "10", "Results per page (default 10)")
@@ -246,17 +248,14 @@ func newPaymentIntentCaptureCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "capture <payment-intent-id>",
 		Short: "Capture a payment intent",
-		Long: `Capture a payment intent that is in REQUIRES_CAPTURE status.
+		Long: `Capture a previously authorized PaymentIntent in REQUIRES_CAPTURE.
 
-The payment intent ID is returned in the response of "payment intent create".
-
-Parameters:
-  Optional:
-    amount_to_capture   number   Amount to capture (if different from original amount)
-
-Examples:
-  uqpay payment intent capture pi_xxx
-  uqpay payment intent capture pi_xxx -d amount_to_capture=50`,
+Use -d merchant_capture_order_id=CAPTURE-001 for your account-unique reference.
+Omit amount_to_capture for full capture, or use a decimal string for an eligible
+pre-authorization final amount. Only final_capture=true (or omission) is supported.
+Each authorization accepts one final capture. Pre-authorization requires account
+and channel support and auto_capture=false. The response capture_id acknowledges
+acceptance; retrieve the intent and inspect capture_records for channel completion.`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := cmdutil.LoadConfig()
@@ -272,7 +271,6 @@ Examples:
 				cmdutil.WriteError(err, cfg.Output)
 				return err
 			}
-			dotparam.CoerceNumbers(body, "amount_to_capture")
 			c := client.New(cfg)
 			resp, err := c.PostH(context.Background(), "/v2/payment_intents/"+args[0]+"/capture", body,
 				map[string]string{
